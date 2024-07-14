@@ -10,11 +10,11 @@ function createSidebarContainer() {
   container.id = 'gh-next-container';
   container.style.position = 'fixed';
   container.style.top = '0';
-  container.style.right = '-300px'; // Initially hidden
+  container.style.right = '-300px';
   container.style.width = '300px';
   container.style.height = '100vh';
   container.style.zIndex = '10000';
-  container.style.transition = 'right 0.3s ease-in-out'; // Smooth transition
+  container.style.transition = 'right 0.3s ease-in-out';
   document.body.appendChild(container);
 }
 

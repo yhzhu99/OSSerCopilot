@@ -1,3 +1,3 @@
 chrome.runtime.onInstalled.addListener(() => {
-    console.log('gh-next extension installed');
-  });
+  console.log('gh-next extension installed');
+});
