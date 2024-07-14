@@ -1,0 +1,6 @@
+node_modules/
+dist/
+
+directory_structure.txt
+file_contents.txt
+extract_content.sh
