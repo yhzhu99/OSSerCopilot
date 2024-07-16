@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "gh-next",
   "version": "1.0.0",
-  "description": "A GitHub companion extension with a collapsible chatbot sidebar.",
+  "description": "A GitHub companion extension.",
   "permissions": ["activeTab", "storage", "sidePanel"],
   "content_scripts": [
     {

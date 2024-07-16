@@ -1,10 +1,10 @@
 import { createApp } from 'vue';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
-import Sidebar from './components/Sidebar.vue';
+import App from './App.vue';
 
 const mountApp = () => {
-  const app = createApp(Sidebar);
+  const app = createApp(App);
   app.use(ElementPlus);
 
   let mountElement = document.getElementById('gh-next-container');
