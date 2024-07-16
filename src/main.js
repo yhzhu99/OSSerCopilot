@@ -7,14 +7,7 @@ const mountApp = () => {
   const app = createApp(App);
   app.use(ElementPlus);
 
-  let mountElement = document.getElementById('gh-next-container');
-
-  if (!mountElement) {
-    mountElement = document.createElement('div');
-    mountElement.id = 'gh-next-container';
-    document.body.appendChild(mountElement);
-  }
-
+  const mountElement = document.getElementById('gh-next-container');
   app.mount(mountElement);
 };
 

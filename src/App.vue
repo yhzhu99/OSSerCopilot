@@ -5,12 +5,13 @@
     </header>
     <main class="content">
       <ChatBot @update-progress="updateProgress" />
+      <div v-if="displayMessage" class="message-display">{{ displayMessage }}</div>
     </main>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { ref, inject } from 'vue';
 import ProgressBar from './components/ProgressBar.vue';
 import ChatBot from './components/ChatBot.vue';
 
@@ -21,6 +22,7 @@ export default {
   },
   setup() {
     const progress = ref(0);
+    const displayMessage = inject('displayMessage', '');
 
     const updateProgress = (newProgress) => {
       progress.value = newProgress;
@@ -29,6 +31,7 @@ export default {
     return {
       progress,
       updateProgress,
+      displayMessage,
     };
   },
 };
@@ -57,8 +60,13 @@ export default {
   display: flex;
   flex-direction: column;
 }
-</style>
 
-<style>
-/* Add any global styles here if needed */
+.message-display {
+  margin-top: 20px;
+  padding: 10px;
+  background-color: #e8e8e8;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #333;
+}
 </style>
