@@ -63,7 +63,7 @@ onMounted(() => {
   <div class="main-page">
     <header class="header">
       <div class="nav-bar">
-        <el-tooltip v-for="(item, index) in navItems" :key="item.view" :content="item.fullText" placement="top">
+        <el-tooltip v-for="(item, index) in navItems" :key="item.view" :content="item.fullText" placement="bottom" effect="light">
           <el-button
             :style="{ backgroundColor: completedTasks[item.view] ? '#0366d6' : '', color: completedTasks[item.view] ? 'white' : '' }"
             @click="() => switchView(item.view, index)"
@@ -77,39 +77,39 @@ onMounted(() => {
     <main class="content">
       <div v-if="currentView === 'project-recommendation'">
         <ChatBot @update-progress="updateProgress" />
-        <el-button @click="markCompleted('project-recommendation')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['project-recommendation']" @click="markCompleted('project-recommendation')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'contribution-guideline'">
         <p>This is the Contribution Guideline Analysis area.</p>
-        <el-button @click="markCompleted('contribution-guideline')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['contribution-guideline']" @click="markCompleted('contribution-guideline')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'project-structure'">
         <p>This is the Project Structure Analysis area.</p>
-        <el-button @click="markCompleted('project-structure')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['project-structure']" @click="markCompleted('project-structure')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'issue-recommendation'">
         <p>This is the Issue Recommendation area.</p>
-        <el-button @click="markCompleted('issue-recommendation')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['issue-recommendation']" @click="markCompleted('issue-recommendation')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'issue-analysis'">
         <p>This is the Issue Analysis area.</p>
-        <el-button @click="markCompleted('issue-analysis')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['issue-analysis']" @click="markCompleted('issue-analysis')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'coding-help'">
         <p>This is the Coding Help area.</p>
-        <el-button @click="markCompleted('coding-help')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['coding-help']" @click="markCompleted('coding-help')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'testing-help'">
         <p>This is the Testing Help area.</p>
-        <el-button @click="markCompleted('testing-help')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['testing-help']" @click="markCompleted('testing-help')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'pre-code-review'">
         <p>This is the Pre-Code Review area.</p>
-        <el-button @click="markCompleted('pre-code-review')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['pre-code-review']" @click="markCompleted('pre-code-review')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'pr-modification'">
         <p>This is the PR Modification Help area.</p>
-        <el-button @click="markCompleted('pr-modification')">Completed, Next Step</el-button>
+        <el-button v-if="!completedTasks['pr-modification']" @click="markCompleted('pr-modification')">Completed, Next Step</el-button>
       </div>
       <div v-if="displayMessage" class="message-display">{{ displayMessage }}</div>
     </main>
@@ -127,7 +127,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px;
+  padding: 10px;
   background-color: #f6f8fa;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   flex-shrink: 0;
@@ -136,29 +136,29 @@ onMounted(() => {
 .nav-bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
+  gap: 5px;
   margin-top: 10px;
 }
 
 .nav-button {
-  width: 100px;
-  height: 50px;
+  width: 90px;
+  height: 40px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  text-align: center; /* 保持文本居中对齐 */
+  text-align: center;
 }
 
 .content {
   flex-grow: 1;
-  padding: 20px;
+  padding: 10px;
   background-color: #ffffff;
   display: flex;
   flex-direction: column;
 }
 
 .message-display {
-  margin-top: 20px;
+  margin-top: 10px;
   padding: 10px;
   background-color: #e8e8e8;
   border-radius: 5px;
