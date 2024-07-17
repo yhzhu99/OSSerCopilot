@@ -1,3 +1,24 @@
+<script setup>
+import { ref, onMounted } from 'vue';
+import ProgressBar from './components/ProgressBar.vue';
+import ChatBot from './components/ChatBot.vue';
+
+const progress = ref(0);
+const displayMessage = ref('');
+
+const updateProgress = (newProgress) => {
+  progress.value = newProgress;
+};
+
+onMounted(() => {
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.type === "FROM_BACKGROUND") {
+      displayMessage.value = request.message;
+    }
+  });
+});
+</script>
+
 <template>
   <div class="main-page">
     <header class="header">
@@ -9,41 +30,6 @@
     </main>
   </div>
 </template>
-
-<script>
-import { ref, onMounted } from 'vue';
-import ProgressBar from './components/ProgressBar.vue';
-import ChatBot from './components/ChatBot.vue';
-
-export default {
-  components: {
-    ProgressBar,
-    ChatBot,
-  },
-  setup() {
-    const progress = ref(0);
-    const displayMessage = ref('');
-
-    const updateProgress = (newProgress) => {
-      progress.value = newProgress;
-    };
-
-    onMounted(() => {
-      chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-        if (request.type === "FROM_BACKGROUND") {
-          displayMessage.value = request.message;
-        }
-      });
-    });
-
-    return {
-      progress,
-      updateProgress,
-      displayMessage,
-    };
-  },
-};
-</script>
 
 <style scoped>
 .main-page {

@@ -1,3 +1,27 @@
+<script setup>
+import { ref } from 'vue';
+import { defineEmits } from 'vue';
+
+const emit = defineEmits(['update-progress']);
+
+const messages = ref([]);
+const userInput = ref('');
+const currentStep = ref(0);
+
+const sendMessage = () => {
+  if (userInput.value.trim()) {
+    messages.value.push({ text: userInput.value, sender: 'user' });
+    // Add bot response logic here
+    userInput.value = '';
+  }
+};
+
+const nextStep = () => {
+  currentStep.value++;
+  emit('update-progress', (currentStep.value / 10) * 100);
+};
+</script>
+
 <template>
   <div class="chatbot">
     <div class="chat-messages">
@@ -16,39 +40,6 @@
     </div>
   </div>
 </template>
-
-<script>
-import { ref } from 'vue';
-
-export default {
-  emits: ['update-progress'],
-  setup(props, { emit }) {
-    const messages = ref([]);
-    const userInput = ref('');
-    const currentStep = ref(0);
-
-    const sendMessage = () => {
-      if (userInput.value.trim()) {
-        messages.value.push({ text: userInput.value, sender: 'user' });
-        // Add bot response logic here
-        userInput.value = '';
-      }
-    };
-
-    const nextStep = () => {
-      currentStep.value++;
-      emit('update-progress', (currentStep.value / 10) * 100);
-    };
-
-    return {
-      messages,
-      userInput,
-      sendMessage,
-      nextStep,
-    };
-  },
-};
-</script>
 
 <style scoped>
 .chatbot {
@@ -103,7 +94,8 @@ export default {
   border-radius: 5px;
 }
 
-.send-button, .next-button {
+.send-button,
+.next-button {
   background-color: #0366d6;
   color: white;
   border: none;
@@ -112,7 +104,8 @@ export default {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.send-button:hover, .next-button:hover {
+.send-button:hover,
+.next-button:hover {
   background-color: #025bb5;
 }
 </style>
