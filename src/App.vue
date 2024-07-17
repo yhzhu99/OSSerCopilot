@@ -1,14 +1,53 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import ProgressBar from './components/ProgressBar.vue';
 import ChatBot from './components/ChatBot.vue';
+import { ElButton, ElTooltip, ElMessageBox } from 'element-plus';
+
+// 导航项的定义
+const navItems = [
+  { view: 'project-recommendation', text: 'Project Rec...', fullText: 'Project Recommendation' },
+  { view: 'contribution-guideline', text: 'Contribu...', fullText: 'Contribution Guideline Analysis' },
+  { view: 'project-structure', text: 'Project Str...', fullText: 'Project Structure Analysis' },
+  { view: 'issue-recommendation', text: 'Issue Rec...', fullText: 'Issue Recommendation' },
+  { view: 'issue-analysis', text: 'Issue Anal...', fullText: 'Issue Analysis' },
+  { view: 'coding-help', text: 'Coding Help', fullText: 'Coding Help' },
+  { view: 'testing-help', text: 'Testing Help', fullText: 'Testing Help' },
+  { view: 'pre-code-review', text: 'Pre-Code Re...', fullText: 'Pre-Code Review' },
+  { view: 'pr-modification', text: 'PR Modific...', fullText: 'PR Modification Help' },
+];
 
 const progress = ref(0);
 const displayMessage = ref('');
 const currentView = ref('project-recommendation');
+const completedTasks = ref({});
 
+// 更新进度
 const updateProgress = (newProgress) => {
   progress.value = newProgress;
+};
+
+// 切换视图
+const switchView = (view, index) => {
+  // 顺序操作检测
+  for (let i = 0; i < index; i++) {
+    if (!completedTasks.value[navItems[i].view]) {
+      ElMessageBox.alert('Please complete the previous steps in order.', 'Warning', {
+        confirmButtonText: 'OK',
+      });
+      return;
+    }
+  }
+  currentView.value = view;
+};
+
+// 标记任务完成
+const markCompleted = (view) => {
+  completedTasks.value[view] = true;
+  // 自动跳转到下一个任务
+  const currentIndex = navItems.findIndex(item => item.view === view);
+  if (currentIndex < navItems.length - 1) {
+    switchView(navItems[currentIndex + 1].view, currentIndex + 1);
+  }
 };
 
 onMounted(() => {
@@ -18,33 +57,59 @@ onMounted(() => {
     }
   });
 });
-
-const switchView = (view) => {
-  currentView.value = view;
-};
 </script>
 
 <template>
   <div class="main-page">
     <header class="header">
-      <ProgressBar :progress="progress" />
       <div class="nav-bar">
-        <el-button @click="switchView('project-recommendation')">项目推荐</el-button>
-        <el-button @click="switchView('contribute-docs')">贡献文档</el-button>
-        <el-button @click="switchView('issue-analysis')">Issue分析</el-button>
+        <el-tooltip v-for="(item, index) in navItems" :key="item.view" :content="item.fullText" placement="top">
+          <el-button
+            :style="{ backgroundColor: completedTasks[item.view] ? '#0366d6' : '', color: completedTasks[item.view] ? 'white' : '' }"
+            @click="() => switchView(item.view, index)"
+            class="nav-button"
+          >
+            {{ item.text }}
+          </el-button>
+        </el-tooltip>
       </div>
     </header>
     <main class="content">
       <div v-if="currentView === 'project-recommendation'">
         <ChatBot @update-progress="updateProgress" />
+        <el-button @click="markCompleted('project-recommendation')">Completed, Next Step</el-button>
       </div>
-      <div v-else-if="currentView === 'contribute-docs'">
-        <!-- 贡献文档的组件或内容 -->
-        <p>这里是贡献文档功能区。</p>
+      <div v-else-if="currentView === 'contribution-guideline'">
+        <p>This is the Contribution Guideline Analysis area.</p>
+        <el-button @click="markCompleted('contribution-guideline')">Completed, Next Step</el-button>
+      </div>
+      <div v-else-if="currentView === 'project-structure'">
+        <p>This is the Project Structure Analysis area.</p>
+        <el-button @click="markCompleted('project-structure')">Completed, Next Step</el-button>
+      </div>
+      <div v-else-if="currentView === 'issue-recommendation'">
+        <p>This is the Issue Recommendation area.</p>
+        <el-button @click="markCompleted('issue-recommendation')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'issue-analysis'">
-        <!-- Issue分析的组件或内容 -->
-        <p>这里是Issue分析功能区。</p>
+        <p>This is the Issue Analysis area.</p>
+        <el-button @click="markCompleted('issue-analysis')">Completed, Next Step</el-button>
+      </div>
+      <div v-else-if="currentView === 'coding-help'">
+        <p>This is the Coding Help area.</p>
+        <el-button @click="markCompleted('coding-help')">Completed, Next Step</el-button>
+      </div>
+      <div v-else-if="currentView === 'testing-help'">
+        <p>This is the Testing Help area.</p>
+        <el-button @click="markCompleted('testing-help')">Completed, Next Step</el-button>
+      </div>
+      <div v-else-if="currentView === 'pre-code-review'">
+        <p>This is the Pre-Code Review area.</p>
+        <el-button @click="markCompleted('pre-code-review')">Completed, Next Step</el-button>
+      </div>
+      <div v-else-if="currentView === 'pr-modification'">
+        <p>This is the PR Modification Help area.</p>
+        <el-button @click="markCompleted('pr-modification')">Completed, Next Step</el-button>
       </div>
       <div v-if="displayMessage" class="message-display">{{ displayMessage }}</div>
     </main>
@@ -55,7 +120,7 @@ const switchView = (view) => {
 .main-page {
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Prevent scroll bars */
+  overflow: hidden;
 }
 
 .header {
@@ -65,17 +130,27 @@ const switchView = (view) => {
   padding: 20px;
   background-color: #f6f8fa;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  flex-shrink: 0; /* Prevent the header from shrinking */
+  flex-shrink: 0;
 }
 
 .nav-bar {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 10px;
   margin-top: 10px;
 }
 
+.nav-button {
+  width: 100px;
+  height: 50px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: center; /* 保持文本居中对齐 */
+}
+
 .content {
-  flex-grow: 1; /* Take up remaining space */
+  flex-grow: 1;
   padding: 20px;
   background-color: #ffffff;
   display: flex;
