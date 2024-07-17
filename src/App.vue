@@ -136,17 +136,27 @@ onMounted(() => {
 .nav-bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 5px;
+  gap: 10px;
   margin-top: 10px;
+  width: 100%;
+  justify-content: center;
 }
 
 .nav-button {
-  width: 100px;
-  height: 30px;
+  width: 100%;
+  max-width: 150px;
+  height: 40px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: center;
+  justify-self: center;
+  margin-left: 0 !important; /* 覆盖 Element Plus 的默认左边距 */
+}
+
+/* 确保按钮组中的所有按钮都没有左边距 */
+.nav-bar :deep(.el-button-group .el-button) {
+  margin-left: 0 !important;
 }
 
 .content {
