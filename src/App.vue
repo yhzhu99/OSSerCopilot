@@ -63,7 +63,7 @@ onMounted(() => {
   <div class="main-page">
     <header class="header">
       <div class="nav-bar">
-        <el-tooltip v-for="(item, index) in navItems" :key="item.view" :content="item.fullText" placement="bottom" effect="light">
+        <el-tooltip v-for="(item, index) in navItems" :key="item.view" :content="item.fullText" placement="bottom">
           <el-button
             :style="{ backgroundColor: completedTasks[item.view] ? '#0366d6' : '', color: completedTasks[item.view] ? 'white' : '' }"
             @click="() => switchView(item.view, index)"
@@ -141,8 +141,8 @@ onMounted(() => {
 }
 
 .nav-button {
-  width: 90px;
-  height: 40px;
+  width: 100px;
+  height: 30px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

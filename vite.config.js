@@ -16,4 +16,10 @@ export default defineConfig({
     },
     cssCodeSplit: false,
   },
+  server: {
+    port: 8000,
+    hmr: {
+      host: 'localhost',
+    },
+  },
 });

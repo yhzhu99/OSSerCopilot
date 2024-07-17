@@ -34,9 +34,6 @@ const nextStep = () => {
         <el-input v-model="userInput" placeholder="Type your message..." @keyup.enter="sendMessage" class="input-box" />
         <el-button class="send-button" @click="sendMessage">Send</el-button>
       </div>
-      <div class="next-row">
-        <el-button class="next-button" @click="nextStep">Next</el-button>
-      </div>
     </div>
   </div>
 </template>
