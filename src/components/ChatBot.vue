@@ -1,12 +1,8 @@
 <script setup>
 import { ref } from 'vue';
-import { defineEmits } from 'vue';
-
-const emit = defineEmits(['update-progress']);
 
 const messages = ref([]);
 const userInput = ref('');
-const currentStep = ref(0);
 
 const sendMessage = () => {
   if (userInput.value.trim()) {
@@ -16,10 +12,6 @@ const sendMessage = () => {
   }
 };
 
-const nextStep = () => {
-  currentStep.value++;
-  emit('update-progress', (currentStep.value / 10) * 100);
-};
 </script>
 
 <template>
