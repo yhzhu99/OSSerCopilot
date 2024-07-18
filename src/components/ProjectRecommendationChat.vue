@@ -28,7 +28,7 @@ const formRecommendedProjects = ref([]);
 // 聊天消息列表
 const messages = ref([]);
 const userInput = ref('');
-const projectUrl = ref('');
+const projectUrl = ref('https://github.com/facebook/react'); // 默认值设置为 React 的 GitHub 仓库地址
 const projectAnalysis = ref('');
 
 // 获取推荐项目
@@ -213,8 +213,8 @@ const handleUserInput = (input) => {
               </el-form>
             </div>
             <div v-if="message.type === 'project-input'">
-              <el-input v-model="projectUrl.value" placeholder="输入GitHub项目地址" @keyup.enter="analyzeProject(projectUrl.value)" />
-              <el-button type="primary" @click="analyzeProject(projectUrl.value)">发送</el-button>
+              <el-input v-model="projectUrl" placeholder="输入GitHub项目地址" @keyup.enter="analyzeProject(projectUrl)" />
+              <el-button type="primary" @click="analyzeProject(projectUrl)">发送</el-button>
             </div>
           </el-card>
         </template>
@@ -222,7 +222,7 @@ const handleUserInput = (input) => {
     </div>
     <div class="chat-inputs">
       <div class="input-row">
-        <el-input v-model="userInput" placeholder="Type your message..." @keyup.enter="sendMessage" class="input-box" />
+        <el-input v-model="userInput" placeholder="请输入“更换一批”、“基于表单推荐”或“分析项目”" @keyup.enter="sendMessage" class="input-box" />
         <el-button class="send-button" @click="sendMessage">Send</el-button>
       </div>
     </div>
