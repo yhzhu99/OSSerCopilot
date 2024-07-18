@@ -25,7 +25,7 @@ const sendMessage = () => {
         <template v-if="message.sender === 'user'">
           <el-card class="user-card">
             <div class="header-content">
-              <el-avatar src="https://www.svgrepo.com/show/276264/user.svg" class="avatar" />
+              <el-avatar src="https://www.svgrepo.com/show/532388/user-search-alt-1.svg" class="avatar" />
               <span>User</span>
             </div>
             <div>{{ message.text }}</div>
@@ -34,7 +34,7 @@ const sendMessage = () => {
         <template v-else>
           <el-card class="bot-card">
             <div class="header-content">
-              <el-avatar src="https://www.svgrepo.com/show/353655/robot.svg" class="avatar" />
+              <el-avatar src="https://www.svgrepo.com/show/35383/robot.svg" class="avatar" />
               <span>Bot</span>
             </div>
             <img v-if="message.img" :src="message.img" class="bot-image" />
@@ -57,15 +57,17 @@ const sendMessage = () => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  padding: 10px;
+  padding: 5px;
   box-sizing: border-box;
 }
 
 .chat-messages {
   flex-grow: 1;
   overflow-y: auto;
-  padding: 10px;
+  padding: 5px;
   background-color: #f9f9f9;
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .message {
@@ -79,21 +81,21 @@ const sendMessage = () => {
 }
 
 .user-card, .bot-card {
-  width: calc(100% - 20px);
+  width: calc(100% - 10px);
   padding: 10px;
   border-radius: 10px;
   box-sizing: border-box;
-  margin-left: 10px;
+  margin-left: 5px;
 }
 
 .user-card {
-  background-color: #d1ecf1;
-  border: 1px solid #bee5eb;
+  background-color: #e1f5fe;
+  border: 1px solid #b3e5fc;
 }
 
 .bot-card {
-  background-color: #f8d7da;
-  border: 1px solid #f5c6cb;
+  background-color: #fce4ec;
+  border: 1px solid #f8bbd0;
 }
 
 .header-content {
@@ -104,6 +106,7 @@ const sendMessage = () => {
 }
 
 .avatar {
+  background-color: #ffeb3b;
   border-radius: 50%;
 }
 
@@ -117,14 +120,14 @@ const sendMessage = () => {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px;
+  padding: 5px;
 }
 
 .input-row {
   display: flex;
-  gap: 10px;
+  gap: 5px;
   flex-shrink: 0;
-  padding: 10px;
+  padding: 5px;
   border-radius: 10px;
   background-color: #f1f1f1;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
