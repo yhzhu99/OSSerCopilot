@@ -56,7 +56,7 @@ const sendMessage = () => {
 .chatbot {
   display: flex;
   flex-direction: column;
-  height: 100vh;
+  height: 72vh;
   padding: 5px;
   box-sizing: border-box;
 }
