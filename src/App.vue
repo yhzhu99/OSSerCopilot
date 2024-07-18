@@ -54,6 +54,15 @@ const startExperiment = () => {
   currentView.value = navItems[0].view;
 };
 
+const canProceed = (index) => {
+  for (let i = 0; i < index; i++) {
+    if (!completedTasks.value[navItems[i].view]) {
+      return false;
+    }
+  }
+  return true;
+};
+
 onMounted(() => {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === "FROM_BACKGROUND") {
@@ -69,7 +78,12 @@ onMounted(() => {
       <div class="nav-bar">
         <el-tooltip v-for="(item, index) in navItems" :key="item.view" :content="item.fullText" placement="bottom">
           <el-button
-            :style="{ backgroundColor: completedTasks[item.view] ? '#0366d6' : '', color: completedTasks[item.view] ? 'white' : '' }"
+            :style="{
+              backgroundColor: completedTasks[item.view] ? '#0366d6' : 
+                             currentView === item.view ? '#28a745' : 
+                             canProceed(index) ? '' : '#f6f8fa',
+              color: completedTasks[item.view] || currentView === item.view ? 'white' : ''
+            }"
             @click="() => switchView(item.view, index)"
             class="nav-button"
           >
