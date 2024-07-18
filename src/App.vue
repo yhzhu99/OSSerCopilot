@@ -1,76 +1,101 @@
+<template>
+  <div class="main-page">
+    <header class="header" v-if="currentView !== 'introduction'">
+      <el-steps
+        class="steps"
+        style="max-width: 100%"
+        :active="currentTaskIndex"
+        finish-status="success"
+      >
+        <el-step
+          v-for="(item, index) in navItems"
+          :key="index"
+          :title="getStepStatus(index)"
+        />
+      </el-steps>
+      <h1 class="current-task-title">{{currentTask}}</h1>
+    </header>
+    <main class="content">
+      <div v-if="currentView === 'introduction'">
+        <h1>Welcome to Our Experiment</h1>
+        <p>We are conducting an interactive test combining GitHub and AI to enhance the GitHub user experience. In this test, you will go through various steps sequentially. Please complete each step before moving to the next.</p>
+        <el-timeline style="max-width: 600px; margin: 20px auto;">
+          <el-timeline-item
+            v-for="(item, index) in navItems"
+            :key="item.view"
+            :timestamp="index + 1"
+          >
+            {{ item.fullText }}
+          </el-timeline-item>
+        </el-timeline>
+        <el-button @click="startExperiment">Confirm Participation</el-button>
+      </div>
+      <div v-else>
+        <component :is="currentComponent" />
+        <el-button @click="nextTask">Completed, Next Step</el-button>
+      </div>
+      <div v-if="displayMessage" class="message-display">{{ displayMessage }}</div>
+    </main>
+  </div>
+</template>
+
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { ElButton, ElMessageBox, ElTimeline, ElTimelineItem, ElSteps, ElStep } from 'element-plus';
+import 'element-plus/theme-chalk/index.css';
 import ChatBot from './components/ChatBot.vue';
-import ProjectRecommendation from './components/ProjectRecommendation.vue';
 import ProjectRecommendationChat from './components/ProjectRecommendationChat.vue';
-import { ElButton, ElTooltip, ElMessageBox } from 'element-plus';
 
 // 导航项的定义
 const navItems = [
-  { view: 'project-recommendation', text: 'Project Rec...', fullText: 'Project Recommendation' },
-  { view: 'contribution-guideline', text: 'Contribu...', fullText: 'Contribution Guideline Analysis' },
-  { view: 'project-structure', text: 'Project Str...', fullText: 'Project Structure Analysis' },
-  { view: 'issue-recommendation', text: 'Issue Rec...', fullText: 'Issue Recommendation' },
-  { view: 'issue-analysis', text: 'Issue Anal...', fullText: 'Issue Analysis' },
-  { view: 'coding-help', text: 'Coding Help', fullText: 'Coding Help' },
-  { view: 'testing-help', text: 'Testing Help', fullText: 'Testing Help' },
-  { view: 'pre-code-review', text: 'Pre-Code Re...', fullText: 'Pre-Code Review' },
-  { view: 'pr-modification', text: 'PR Modific...', fullText: 'PR Modification Help' },
+  { view: 'project-recommendation', fullText: 'Project Recommendation' },
+  { view: 'contribution-guideline', fullText: 'Contribution Guideline Analysis' },
+  { view: 'project-structure', fullText: 'Project Structure Analysis' },
+  { view: 'issue-recommendation', fullText: 'Issue Recommendation' },
+  { view: 'issue-analysis', fullText: 'Issue Analysis' },
+  { view: 'coding-help', fullText: 'Coding Help' },
+  { view: 'testing-help', fullText: 'Testing Help' },
+  { view: 'pre-code-review', fullText: 'Pre-Code Review' },
+  { view: 'pr-modification', fullText: 'PR Modification Help' },
 ];
 
-const progress = ref(0);
 const displayMessage = ref('');
 const currentView = ref('introduction'); // 初始视图为引导页
-const completedTasks = ref({});
-const currentTask = ref(''); // 追踪当前任务
+const currentTaskIndex = ref(0);
+const currentTask = computed(() => navItems[currentTaskIndex.value].fullText); // 追踪当前任务
 
-
-// 更新进度
-const updateProgress = (newProgress) => {
-  progress.value = newProgress;
+// 获取步骤状态
+const getStepStatus = (index) => {
+  if (index < currentTaskIndex.value) {
+    return 'OK';
+  } else if (index === currentTaskIndex.value) {
+    return 'Cur.';
+  } else {
+    return '...';
+  }
 };
 
 // 切换视图
 const switchView = (view, index) => {
-  // 顺序操作检测
-  for (let i = 0; i < index; i++) {
-    if (!completedTasks.value[navItems[i].view]) {
-      ElMessageBox.alert('Please complete the previous steps in order.', 'Warning', {
-        confirmButtonText: 'OK',
-      });
-      return;
-    }
-  }
   currentView.value = view;
-  // 只更新当前任务为有效任务
-  if (!completedTasks.value[view]) {
-    currentTask.value = view;
-  }
+  currentTaskIndex.value = index;
 };
 
-// 标记任务完成
-const markCompleted = (view) => {
-  completedTasks.value[view] = true;
-  // 保持当前任务不变以便用户回退时仍保持绿色
-  // 自动跳转到下一个任务
-  const currentIndex = navItems.findIndex(item => item.view === view);
-  if (currentIndex < navItems.length - 1) {
-    switchView(navItems[currentIndex + 1].view, currentIndex + 1);
+// 跳转到下一个任务
+const nextTask = () => {
+  if (currentTaskIndex.value < navItems.length - 1) {
+    currentTaskIndex.value++;
+    currentView.value = navItems[currentTaskIndex.value].view;
+  } else {
+    ElMessageBox.alert('You have completed all the tasks.', 'Congratulations', {
+      confirmButtonText: 'OK',
+    });
   }
 };
 
 const startExperiment = () => {
-  currentView.value = navItems[0].view;
-  currentTask.value = navItems[0].view; // 设置初始任务
-};
-
-const canProceed = (index) => {
-  for (let i = 0; i < index; i++) {
-    if (!completedTasks.value[navItems[i].view]) {
-      return false;
-    }
-  }
-  return true;
+  currentTaskIndex.value = 0;
+  currentView.value = navItems[0].view; // 设置初始任务
 };
 
 onMounted(() => {
@@ -80,77 +105,33 @@ onMounted(() => {
     }
   });
 });
-</script>
 
-<template>
-  <div class="main-page">
-    <header class="header" v-if="currentView !== 'introduction'">
-      <div class="nav-bar">
-        <el-tooltip v-for="(item, index) in navItems" :key="item.view" :content="item.fullText" placement="bottom">
-        <el-button
-          :style="{
-            backgroundColor: currentTask === item.view ? '#28a745' : 
-                            completedTasks[item.view] ? '#0366d6' : 
-                            canProceed(index) ? '' : '#f6f8fa',
-            color: currentTask === item.view || completedTasks[item.view] ? 'white' : ''
-          }"
-          @click="() => switchView(item.view, index)"
-          class="nav-button"
-        >
-          {{ item.text }}
-        </el-button>
-        </el-tooltip>
-      </div>
-    </header>
-    <main class="content">
-      <div v-if="currentView === 'introduction'">
-        <h1>Welcome to Our Experiment</h1>
-        <p>We are conducting an interactive test combining GitHub and AI to enhance the GitHub user experience. In this test, you will go through various steps sequentially. Please complete each step before moving to the next.</p>
-        <p>Click the button below to start the experiment.</p>
-        <el-button @click="startExperiment">Confirm Participation</el-button>
-      </div>
-      <div v-else-if="currentView === 'project-recommendation'">
-        <!-- <ProjectRecommendation /> -->
-        <ProjectRecommendationChat />
-        <el-button v-if="!completedTasks['project-recommendation']" @click="markCompleted('project-recommendation')">Completed, Next Step</el-button>
-      </div>
-      <div v-else-if="currentView === 'contribution-guideline'">
-        <p>This is the Contribution Guideline Analysis area.</p>
-        <ChatBot @update-progress="updateProgress" />
-        <el-button v-if="!completedTasks['contribution-guideline']" @click="markCompleted('contribution-guideline')">Completed, Next Step</el-button>
-      </div>
-      <div v-else-if="currentView === 'project-structure'">
-        <p>This is the Project Structure Analysis area.</p>
-        <el-button v-if="!completedTasks['project-structure']" @click="markCompleted('project-structure')">Completed, Next Step</el-button>
-      </div>
-      <div v-else-if="currentView === 'issue-recommendation'">
-        <p>This is the Issue Recommendation area.</p>
-        <el-button v-if="!completedTasks['issue-recommendation']" @click="markCompleted('issue-recommendation')">Completed, Next Step</el-button>
-      </div>
-      <div v-else-if="currentView === 'issue-analysis'">
-        <p>This is the Issue Analysis area.</p>
-        <el-button v-if="!completedTasks['issue-analysis']" @click="markCompleted('issue-analysis')">Completed, Next Step</el-button>
-      </div>
-      <div v-else-if="currentView === 'coding-help'">
-        <p>This is the Coding Help area.</p>
-        <el-button v-if="!completedTasks['coding-help']" @click="markCompleted('coding-help')">Completed, Next Step</el-button>
-      </div>
-      <div v-else-if="currentView === 'testing-help'">
-        <p>This is the Testing Help area.</p>
-        <el-button v-if="!completedTasks['testing-help']" @click="markCompleted('testing-help')">Completed, Next Step</el-button>
-      </div>
-      <div v-else-if="currentView === 'pre-code-review'">
-        <p>This is the Pre-Code Review area.</p>
-        <el-button v-if="!completedTasks['pre-code-review']" @click="markCompleted('pre-code-review')">Completed, Next Step</el-button>
-      </div>
-      <div v-else-if="currentView === 'pr-modification'">
-        <p>This is the PR Modification Help area.</p>
-        <el-button v-if="!completedTasks['pr-modification']" @click="markCompleted('pr-modification')">Completed, Next Step</el-button>
-      </div>
-      <div v-if="displayMessage" class="message-display">{{ displayMessage }}</div>
-    </main>
-  </div>
-</template>
+// 计算当前显示的组件
+const currentComponent = computed(() => {
+  switch (currentView.value) {
+    case 'project-recommendation':
+      return ProjectRecommendationChat;
+    case 'contribution-guideline':
+      return ChatBot;
+    case 'project-structure':
+      return { template: '<p>This is the Project Structure Analysis area.</p>' };
+    case 'issue-recommendation':
+      return { template: '<p>This is the Issue Recommendation area.</p>' };
+    case 'issue-analysis':
+      return { template: '<p>This is the Issue Analysis area.</p>' };
+    case 'coding-help':
+      return { template: '<p>This is the Coding Help area.</p>' };
+    case 'testing-help':
+      return { template: '<p>This is the Testing Help area.</p>' };
+    case 'pre-code-review':
+      return { template: '<p>This is the Pre-Code Review area.</p>' };
+    case 'pr-modification':
+      return { template: '<p>This is the PR Modification Help area.</p>' };
+    default:
+      return { template: '<div></div>' };
+  }
+});
+</script>
 
 <style scoped>
 .main-page {
@@ -171,30 +152,18 @@ onMounted(() => {
   flex-shrink: 0;
 }
 
-.nav-bar {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 10px;
-  margin-top: 10px;
-  width: 100%;
-  justify-content: center;
+.steps {
+  width: 1800px;
+  max-width: 100%;
 }
 
-.nav-button {
-  width: 100%;
-  max-width: 150px;
-  height: 40px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.current-task-title {
+  margin-top: 1px;
+  margin-bottom: 1px;
+  font-size: 20px;
+  font-weight: bold;
+  color: #444649;
   text-align: center;
-  justify-self: center;
-  margin-left: 0 !important; /* 覆盖 Element Plus 的默认左边距 */
-}
-
-/* 确保按钮组中的所有按钮都没有左边距 */
-.nav-bar :deep(.el-button-group .el-button) {
-  margin-left: 0 !important;
 }
 
 .content {
