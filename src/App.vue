@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import ChatBot from './components/ChatBot.vue';
+import ProjectRecommendation from './components/ProjectRecommendation.vue';
 import { ElButton, ElTooltip, ElMessageBox } from 'element-plus';
 
 // 导航项的定义
@@ -108,11 +109,12 @@ onMounted(() => {
         <el-button @click="startExperiment">Confirm Participation</el-button>
       </div>
       <div v-else-if="currentView === 'project-recommendation'">
-        <ChatBot @update-progress="updateProgress" />
+        <ProjectRecommendation />
         <el-button v-if="!completedTasks['project-recommendation']" @click="markCompleted('project-recommendation')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'contribution-guideline'">
         <p>This is the Contribution Guideline Analysis area.</p>
+        <ChatBot @update-progress="updateProgress" />
         <el-button v-if="!completedTasks['contribution-guideline']" @click="markCompleted('contribution-guideline')">Completed, Next Step</el-button>
       </div>
       <div v-else-if="currentView === 'project-structure'">
