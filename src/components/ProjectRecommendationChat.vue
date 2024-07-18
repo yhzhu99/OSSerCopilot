@@ -271,7 +271,7 @@ const handleUserInput = (input) => {
 }
 
 .bot-card {
-  background-color: #fce4ec;
+  background-color: #ffffff;
   border: 1px solid #f8bbd0;
 }
 
