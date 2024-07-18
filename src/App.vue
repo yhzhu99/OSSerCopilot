@@ -18,7 +18,7 @@ const navItems = [
 
 const progress = ref(0);
 const displayMessage = ref('');
-const currentView = ref('project-recommendation');
+const currentView = ref('introduction'); // 初始视图为引导页
 const completedTasks = ref({});
 
 // 更新进度
@@ -50,6 +50,10 @@ const markCompleted = (view) => {
   }
 };
 
+const startExperiment = () => {
+  currentView.value = navItems[0].view;
+};
+
 onMounted(() => {
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.type === "FROM_BACKGROUND") {
@@ -75,7 +79,13 @@ onMounted(() => {
       </div>
     </header>
     <main class="content">
-      <div v-if="currentView === 'project-recommendation'">
+      <div v-if="currentView === 'introduction'">
+        <h1>Welcome to Our Experiment</h1>
+        <p>We are conducting an interactive test combining GitHub and AI to enhance the GitHub user experience. In this test, you will go through various steps sequentially. Please complete each step before moving to the next.</p>
+        <p>Click the button below to start the experiment.</p>
+        <el-button @click="startExperiment">Confirm Participation</el-button>
+      </div>
+      <div v-else-if="currentView === 'project-recommendation'">
         <ChatBot @update-progress="updateProgress" />
         <el-button v-if="!completedTasks['project-recommendation']" @click="markCompleted('project-recommendation')">Completed, Next Step</el-button>
       </div>
@@ -121,6 +131,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  font-family: Arial, sans-serif; /* 确保全局应用 */
+  color: #333333; /* 全局字体颜色 */
 }
 
 .header {

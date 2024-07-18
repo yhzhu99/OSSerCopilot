@@ -1,1 +1,17 @@
-/* Add any global styles here */
+/* Add any global styles here *//* Add any global styles here */
+
+body, html, #gh-next-container {
+    font-family: Arial, sans-serif;
+    color: #333333;
+    background-color: #ffffff;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: Arial, sans-serif;
+    color: #333333;
+  }
+  
+  p, div, span, input, button {
+    font-family: Arial, sans-serif;
+    color: #333333;
+  }
