@@ -20,6 +20,8 @@ const progress = ref(0);
 const displayMessage = ref('');
 const currentView = ref('introduction'); // 初始视图为引导页
 const completedTasks = ref({});
+const currentTask = ref(''); // 追踪当前任务
+
 
 // 更新进度
 const updateProgress = (newProgress) => {
@@ -38,11 +40,16 @@ const switchView = (view, index) => {
     }
   }
   currentView.value = view;
+  // 只更新当前任务为有效任务
+  if (!completedTasks.value[view]) {
+    currentTask.value = view;
+  }
 };
 
 // 标记任务完成
 const markCompleted = (view) => {
   completedTasks.value[view] = true;
+  // 保持当前任务不变以便用户回退时仍保持绿色
   // 自动跳转到下一个任务
   const currentIndex = navItems.findIndex(item => item.view === view);
   if (currentIndex < navItems.length - 1) {
@@ -52,6 +59,7 @@ const markCompleted = (view) => {
 
 const startExperiment = () => {
   currentView.value = navItems[0].view;
+  currentTask.value = navItems[0].view; // 设置初始任务
 };
 
 const canProceed = (index) => {
@@ -74,21 +82,21 @@ onMounted(() => {
 
 <template>
   <div class="main-page">
-    <header class="header">
+    <header class="header" v-if="currentView !== 'introduction'">
       <div class="nav-bar">
         <el-tooltip v-for="(item, index) in navItems" :key="item.view" :content="item.fullText" placement="bottom">
-          <el-button
-            :style="{
-              backgroundColor: completedTasks[item.view] ? '#0366d6' : 
-                             currentView === item.view ? '#28a745' : 
-                             canProceed(index) ? '' : '#f6f8fa',
-              color: completedTasks[item.view] || currentView === item.view ? 'white' : ''
-            }"
-            @click="() => switchView(item.view, index)"
-            class="nav-button"
-          >
-            {{ item.text }}
-          </el-button>
+        <el-button
+          :style="{
+            backgroundColor: currentTask === item.view ? '#28a745' : 
+                            completedTasks[item.view] ? '#0366d6' : 
+                            canProceed(index) ? '' : '#f6f8fa',
+            color: currentTask === item.view || completedTasks[item.view] ? 'white' : ''
+          }"
+          @click="() => switchView(item.view, index)"
+          class="nav-button"
+        >
+          {{ item.text }}
+        </el-button>
         </el-tooltip>
       </div>
     </header>
