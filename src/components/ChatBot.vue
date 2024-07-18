@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue';
+import { ElCard, ElInput, ElButton, ElAvatar } from 'element-plus';
+import 'element-plus/dist/index.css';
 
 const messages = ref([]);
 const userInput = ref('');
@@ -7,18 +9,38 @@ const userInput = ref('');
 const sendMessage = () => {
   if (userInput.value.trim()) {
     messages.value.push({ text: userInput.value, sender: 'user' });
-    // Add bot response logic here
+    // 模拟bot回复
+    setTimeout(() => {
+      messages.value.push({ text: '这是bot的回复', sender: 'bot', img: 'https://shadow.elemecdn.com/app/element/hamburger.9cf7b091-55e9-11e9-a976-7f4d0b07eef6.png' });
+    }, 1000);
     userInput.value = '';
   }
 };
-
 </script>
 
 <template>
   <div class="chatbot">
     <div class="chat-messages">
-      <div v-for="(message, index) in messages" :key="index" class="message">
-        {{ message.text }}
+      <div v-for="(message, index) in messages" :key="index" :class="['message', message.sender]">
+        <template v-if="message.sender === 'user'">
+          <el-card class="user-card">
+            <div class="header-content">
+              <el-avatar src="https://www.svgrepo.com/show/276264/user.svg" class="avatar" />
+              <span>User</span>
+            </div>
+            <div>{{ message.text }}</div>
+          </el-card>
+        </template>
+        <template v-else>
+          <el-card class="bot-card">
+            <div class="header-content">
+              <el-avatar src="https://www.svgrepo.com/show/353655/robot.svg" class="avatar" />
+              <span>Bot</span>
+            </div>
+            <img v-if="message.img" :src="message.img" class="bot-image" />
+            <div>{{ message.text }}</div>
+          </el-card>
+        </template>
       </div>
     </div>
     <div class="chat-inputs">
@@ -34,7 +56,9 @@ const sendMessage = () => {
 .chatbot {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  height: 100vh;
+  padding: 10px;
+  box-sizing: border-box;
 }
 
 .chat-messages {
@@ -46,16 +70,54 @@ const sendMessage = () => {
 
 .message {
   margin-bottom: 10px;
+  display: flex;
+  width: 100%;
+}
+
+.user, .bot {
+  justify-content: flex-start;
+}
+
+.user-card, .bot-card {
+  width: calc(100% - 20px);
   padding: 10px;
-  border-radius: 5px;
-  background-color: #e8e8e8;
+  border-radius: 10px;
+  box-sizing: border-box;
+  margin-left: 10px;
+}
+
+.user-card {
+  background-color: #d1ecf1;
+  border: 1px solid #bee5eb;
+}
+
+.bot-card {
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-bottom: 5px;
+}
+
+.avatar {
+  border-radius: 50%;
+}
+
+.bot-image {
+  width: 100%;
+  border-radius: 10px;
+  margin-top: 5px;
 }
 
 .chat-inputs {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 2px;
+  padding: 10px;
 }
 
 .input-row {
@@ -68,23 +130,12 @@ const sendMessage = () => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-.next-row {
-  display: flex;
-  justify-content: flex-end;
-  flex-shrink: 0;
-  padding: 10px;
-  border-radius: 10px;
-  background-color: #f1f1f1;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
 .input-box {
   flex-grow: 1;
   border-radius: 5px;
 }
 
-.send-button,
-.next-button {
+.send-button {
   background-color: #0366d6;
   color: white;
   border: none;
@@ -93,8 +144,7 @@ const sendMessage = () => {
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.send-button:hover,
-.next-button:hover {
+.send-button:hover {
   background-color: #025bb5;
 }
 </style>
