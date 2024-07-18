@@ -6,14 +6,16 @@
         style="max-width: 100%"
         :active="currentTaskIndex"
         finish-status="success"
+        align-center
       >
         <el-step
           v-for="(item, index) in navItems"
           :key="index"
           :title="getStepStatus(index)"
+          @click="index <= currentTaskIndex && switchView(item.view, index)"
         />
       </el-steps>
-      <h1 class="current-task-title">{{currentTask}}</h1>
+      <h1 class="current-task-title">{{ currentTask }}</h1>
     </header>
     <main class="content">
       <div v-if="currentView === 'introduction'">
