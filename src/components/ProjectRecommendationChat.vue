@@ -5,62 +5,145 @@ import 'element-plus/dist/index.css';
 
 // 模拟用户历史数据
 const userHistory = reactive({
-  programmingLanguages: ['JavaScript', 'Python'],
-  projectExperience: '初级',
-  frameworks: ['Vue', 'React'],
-  availableTime: '每周10小时',
-  motivation: '学习前端开发最佳实践',
+  programmingLanguages: ['C++', 'Python'],
+  projectExperience: 'I have worked on the design and development of deep learning frameworks',
+  availableTime: '10 hours per week',
+  motivation: 'Learn best practices of deep learning frameworks',
 });
 
 // 表单数据
 const form = reactive({
   programmingLanguages: [],
   projectExperience: '',
-  frameworks: [],
   availableTime: '',
   motivation: '',
 });
 
+// 传递函数
+const props = defineProps({
+  onNextStep: Function
+});
+
 // 推荐项目列表
 const recommendedProjects = ref([]);
+const recommendedProjects2 = ref([]);
+const recommendedProjects3 = ref([]);
 const formRecommendedProjects = ref([]);
+const recommendedNumber = ref(2);
 
 // 聊天消息列表
 const messages = ref([]);
 const userInput = ref('');
-const projectUrl = ref('https://github.com/facebook/react'); // 默认值设置为 React 的 GitHub 仓库地址
+const projectUrl = ref('https://github.com/pytorch/pytorch'); // 默认值设置为 pytorch 的 GitHub 仓库地址
 const projectAnalysis = ref('');
 
 // 获取推荐项目
-const getRecommendedProjects = () => {
+const getFirstRecommendedProjects = () => {
   setTimeout(() => {
     recommendedProjects.value = [
       {
         name: 'Vue.js',
-        description: '渐进式JavaScript框架',
-        background: 'Vue.js是一套用于构建用户界面的渐进式JavaScript框架。',
-        activity: '非常活跃，每周有多个PR和Issue',
-        reason: '适合前端开发者，有许多适合新手的issue',
+        link: 'https://github.com/vuejs/vue',
+        description: 'Progressive JavaScript framework',
+        background: 'Vue.js is a progressive JavaScript framework for building user interfaces.',
+        activity: 'Very active, with multiple PRs and issues every week',
+        reason: 'Suitable for front-end developers, with many beginner-friendly issues',
         suitableIssues: [
-          { title: '改进文档', difficulty: '简单' },
-          { title: '修复小型bug', difficulty: '中等' },
-        ],
-      },
-      {
-        name: 'TensorFlow',
-        description: '开源机器学习平台',
-        background: 'TensorFlow是一个端到端开源机器学习平台。',
-        activity: '非常活跃，有大量贡献者',
-        reason: '适合对机器学习感兴趣的Python开发者',
+          { number: '10252', title: 'Wrong definition of the type AsyncComponentFactory', difficulty: 'Easy' , url: 'https://github.com/vuejs/vue/issues/10252' },
+          { number: '10191', title: 'Warn if colon shorthand is used on v-if/v-html/etc.', difficulty: 'Medium' , url: 'https://github.com/vuejs/vue/issues/10191' },
+          ],
+        },
+        {
+        name: 'React',
+        link: 'https://github.com/facebook/react',
+        description: 'JavaScript library for building user interfaces',
+        background: 'React is a JavaScript library for building user interfaces.',
+        activity: 'Very active, with multiple PRs and issues every day',
+        reason: 'Suitable for front-end developers, with many beginner-friendly issues',
         suitableIssues: [
-          { title: '添加新的示例', difficulty: '中等' },
-          { title: '改进错误信息', difficulty: '简单' },
+          { title: 'Fix component bugs', difficulty: 'Medium' },
+          { title: 'Improve documentation examples', difficulty: 'Easy' }
         ],
-      },
+      }
     ];
-    messages.value.push({ text: '推荐适合你的项目列表如下：', sender: 'bot' });
-    messages.value.push({ type: 'recommendation', data: recommendedProjects.value, sender: 'bot' });
-  }, 1000);
+    messages.value.push({ text: 'Based on your history of activity on GitHub, the following projects are better suited for you:', 
+                          sender: 'bot',
+                          type: 'recommendation', 
+                          data: recommendedProjects.value,
+                          endText: 'You can also ask me to recommend more projects that would be suitable for you to contribute to, or to make more specific requests' });
+    }, 500);
+};
+
+const getRecommendedProjects = () => {
+  if (recommendedNumber.value === 2) {
+    setTimeout(() => {
+      recommendedProjects2.value = [
+        {
+          name: 'Quasar',
+          link: 'https://github.com/quasarframework/quasar',
+          description: 'Vue.js-based framework for building high-performance applications',
+          background: 'Quasar is a Vue.js-based framework for building high-performance web, mobile, and desktop applications.',
+          activity: 'Very active, with frequent updates and a vibrant community',
+          reason: 'Suitable for developers who want to build applications using Vue.js with ease',
+          suitableIssues: [
+              { title: 'Improve component documentation', difficulty: 'Easy' },
+              { title: 'Fix UI bugs', difficulty: 'Medium' }
+          ]
+        },
+        {
+          name: 'Pydantic',
+          link: 'https://github.com/pydantic/pydantic',
+          description: 'Data validation and settings management using Python type annotations',
+          background: 'Pydantic is a data validation and settings management library using Python type annotations.',
+          activity: 'Active, with regular contributions and updates',
+          reason: 'Suitable for Python developers who need robust data validation',
+          suitableIssues: [
+            { title: 'Add new validation rules', difficulty: 'Medium' },
+            { title: 'Improve error messages', difficulty: 'Easy' }
+          ]
+        }
+      ];
+      messages.value.push({ text: 'Based on your history of activity on GitHub, the following projects are better suited for you:', 
+                            sender: 'bot',
+                            type: 'recommendation',
+                            data: recommendedProjects2.value });
+    }, 500);
+    recommendedNumber.value++;
+  }
+  else {
+    setTimeout(() => {
+      recommendedProjects3.value = [
+        {
+          name: 'Scrapy',
+          link: 'https://github.com/scrapy/scrapy',
+          description: 'An open-source and collaborative web crawling framework for Python',
+          background: 'Scrapy is an open-source and collaborative web crawling framework for Python.',
+          activity: 'Very active, with a large number of contributors and frequent updates',
+          reason: 'Suitable for Python developers interested in web scraping and crawling',
+          suitableIssues: [
+            { title: 'Fix spider bugs', difficulty: 'Medium' },
+            { title: 'Improve documentation examples', difficulty: 'Easy' }
+          ]
+        },
+        {
+          name: 'Weblate',
+          link: 'https://github.com/weblate/weblate',
+          description: 'A web-based continuous localization tool',
+          background: 'Weblate is a web-based continuous localization tool.',
+          activity: 'Active, with regular contributions and a supportive community',
+          reason: 'Suitable for developers and translators working on multilingual projects',
+          suitableIssues: [
+            { title: 'Improve translation suggestions', difficulty: 'Easy' },
+            { title: 'Add new language support', difficulty: 'Medium' }
+          ]
+        }
+      ];
+      messages.value.push({ text: 'Based on your history of activity on GitHub, the following projects are better suited for you:',
+                            sender: 'bot',
+                            type: 'recommendation',
+                            data: recommendedProjects3.value });
+      }, 500);
+  }
 };
 
 // 基于表单推荐项目
@@ -68,31 +151,35 @@ const getFormRecommendedProjects = () => {
   setTimeout(() => {
     formRecommendedProjects.value = [
       {
-        name: 'React',
-        description: '用于构建用户界面的JavaScript库',
-        background: 'React 是一个用于构建用户界面的 JavaScript 库。',
-        activity: '非常活跃，每天有多个PR和Issue',
-        reason: '适合前端开发者，有许多适合新手的issue',
+        name: 'TensorFlow',
+        link: 'https://github.com/tensorflow/tensorflow',
+        description: 'Open-source machine learning platform',
+        background: 'TensorFlow is an end-to-end open-source machine learning platform.',
+        activity: 'Very active, with a large number of contributors',
+        reason: 'Suitable for Python developers interested in machine learning',
         suitableIssues: [
-          { title: '修复组件bug', difficulty: '中等' },
-          { title: '改进文档示例', difficulty: '简单' },
-        ],
+          { title: 'Add new examples', difficulty: 'Medium' },
+          { title: 'Improve error messages', difficulty: 'Easy' }
+        ]
       },
       {
-        name: 'Django',
-        description: '高层次Python Web框架',
-        background: 'Django 是一个高级的 Python Web 框架，鼓励快速开发和简洁的设计。',
-        activity: '活跃度高，每周有多个PR和Issue',
-        reason: '适合对后端开发感兴趣的Python开发者',
+        name: 'PyTorch',
+        link: 'https://github.com/pytorch/pytorch',
+        description: 'Scientific computing package for deep learning',
+        background: 'PyTorch is a scientific computing package for deep learning.',
+        activity: 'Active, with multiple PRs and issues every week',
+        reason: 'Suitable for Python developers interested in deep learning',
         suitableIssues: [
-          { title: '优化数据库查询', difficulty: '中等' },
-          { title: '改进错误处理', difficulty: '简单' },
-        ],
-      },
+          { number: '130861', title: 'torch.fx.Tracer.record_stack_traces is broken in torch 2.4.0', difficulty: 'Medium' , url: 'https://github.com/pytorch/pytorch/issues/130861' },
+          { number: '117351', title: 'Logging when executing fx.Interpreter', difficulty: 'Medium' , url: 'https://github.com/pytorch/pytorch/issues/117351' },
+        ]
+      }
     ];
-    messages.value.push({ text: '基于表单推荐的项目列表如下：', sender: 'bot' });
-    messages.value.push({ type: 'recommendation', data: formRecommendedProjects.value, sender: 'bot' });
-  }, 1000);
+    messages.value.push({ text: 'Based on your submitted form, the following projects are better suited for you:',
+                          sender: 'bot',
+                          type: 'recommendation',
+                          data: formRecommendedProjects.value });
+  }, 500);
 };
 
 // 分析项目
@@ -100,21 +187,26 @@ const analyzeProject = (url) => {
   console.log(`Analyzing project: ${url}`);
   setTimeout(() => {
     projectAnalysis.value = {
-      summary: `该项目活跃度较高，有许多适合新手的issue。社区响应迅速，适合新手开发。`,
+      summary: `The project is highly active and has many issue for newbies.The community is responsive and suitable for newbie developers.`,
     };
-    messages.value.push({ text: `项目分析结果：${projectAnalysis.value.summary}`, sender: 'bot' });
-  }, 1000);
+    messages.value.push({ text: `Analysis Results:${projectAnalysis.value.summary}`, sender: 'bot' });
+  }, 500);
+};
+
+// 跳转到项目链接
+const chooseProject = (link) => { 
+      props.onNextStep(); // 调用传入的函数
+      window.open(link, '_blank');
 };
 
 // 初始化推荐项目
 onMounted(() => {
   form.programmingLanguages = userHistory.programmingLanguages;
   form.projectExperience = userHistory.projectExperience;
-  form.frameworks = userHistory.frameworks;
   form.availableTime = userHistory.availableTime;
   form.motivation = userHistory.motivation;
 
-  getRecommendedProjects();
+  getFirstRecommendedProjects();
 });
 
 // 发送消息
@@ -128,16 +220,18 @@ const sendMessage = () => {
 
 // 处理用户输入
 const handleUserInput = (input) => {
-  if (input.toLowerCase().includes('更换一批')) {
+  if (input.toLowerCase().includes('recommend more')) {
     getRecommendedProjects();
-  } else if (input.toLowerCase().includes('基于表单推荐')) {
-    messages.value.push({ text: '请填写表单以获取推荐项目：', sender: 'bot' });
-    messages.value.push({ type: 'form', sender: 'bot' });
-  } else if (input.toLowerCase().includes('分析项目')) {
-    messages.value.push({ text: '请输入GitHub项目地址：', sender: 'bot' });
-    messages.value.push({ type: 'project-input', sender: 'bot' });
+  } else if (input.toLowerCase().includes('specific need')) {
+    messages.value.push({ text: 'Sure! Please fill out the request form below and I will recommend a project for you with your specific needs in mind!',
+                          sender: 'bot',
+                          type: 'form' });
+  } else if (input.toLowerCase().includes('suitable') && input.toLowerCase().includes('analyze')) {
+    messages.value.push({ text: 'Sure! Please enter the url of the project you are interested in',
+                          sender: 'bot',
+                          type: 'project-input', });
   } else {
-    messages.value.push({ text: '无法识别的命令，请输入 “更换一批”、 “基于表单推荐” 或 “分析项目”', sender: 'bot' });
+    messages.value.push({ text: 'System error: please try again later.', sender: 'bot' });
   }
 };
 </script>
@@ -166,63 +260,67 @@ const handleUserInput = (input) => {
             <div v-if="message.type === 'recommendation'">
               <el-collapse>
                 <el-collapse-item v-for="project in message.data" :key="project.name" :title="project.name">
-                  <p><strong>描述：</strong>{{ project.description }}</p>
-                  <p><strong>背景：</strong>{{ project.background }}</p>
-                  <p><strong>活跃度：</strong>{{ project.activity }}</p>
-                  <p><strong>推荐原因：</strong>{{ project.reason }}</p>
+                  <div class="project-container">
+                  <el-link :href="project.link" type="primary" target="_blank" :gutter="10"> {{ project.name }}</el-link>
+                  <!-- <el-button type="primary" @click="props.onNextStep">Choose This Project!</el-button> -->
+                  <el-button type="primary" @click="chooseProject(project.link)">Choose This Project!</el-button>
+                  </div>
+                  <p><strong>Project Description:</strong>{{ project.description }}</p>
+                  <p><strong>Project Background:</strong>{{ project.background }}</p>
+                  <p><strong>Project activity:</strong>{{ project.activity }}</p>
+                  <p><strong>Recommendation Reason:</strong>{{ project.reason }}</p>
                   <div>
-                    <strong>适合新手的issues：</strong>
+                    <strong>issues for newcomers:</strong>
                     <ul>
-                      <li v-for="issue in project.suitableIssues" :key="issue.title">
-                        {{ issue.title }} - 难度：<el-tag :type="issue.difficulty === '简单' ? 'success' : 'warning'">{{ issue.difficulty }}</el-tag>
+                      <li v-for="issue in project.suitableIssues" :key="issue.number">
+                        <div><el-link :href="issue.url" type="primary" target="_blank"># {{ issue.number }}</el-link> - difficulty level:<el-tag :type="issue.difficulty === 'Easy' ? 'success' : 'warning'">{{ issue.difficulty }}</el-tag></div>
+                        <div>{{ issue.title }}</div>
                       </li>
                     </ul>
                   </div>
                 </el-collapse-item>
               </el-collapse>
-              <el-button @click="getRecommendedProjects">更换一批</el-button>
+              <div>
+              <el-button @click="getRecommendedProjects">recommend more</el-button>
+              </div>
             </div>
             <div v-if="message.type === 'form'">
               <el-form :model="form" label-width="120px" class="recommendation-form">
-                <el-form-item label="编程语言">
-                  <el-select v-model="form.programmingLanguages" multiple placeholder="选择编程语言">
+                <el-form-item label="Programming Languages">
+                  <el-select v-model="form.programmingLanguages" multiple placeholder="Select the programming language of the project you want to contribute">
                     <el-option label="JavaScript" value="JavaScript" />
                     <el-option label="Python" value="Python" />
                     <el-option label="Java" value="Java" />
+                    <el-option label="C" value="C" />
                     <el-option label="C++" value="C++" />
+                    <el-option label="C#" value="C" />
+                    <el-option label="Rust" value="Rust" />
                   </el-select>
                 </el-form-item>
-                <el-form-item label="项目经历">
-                  <el-input v-model="form.projectExperience" placeholder="描述你的项目经历" />
+                <el-form-item label="Programming Experience">
+                  <el-input v-model="form.projectExperience" placeholder="Describe your project experience" />
                 </el-form-item>
-                <el-form-item label="框架">
-                  <el-select v-model="form.frameworks" multiple placeholder="选择熟悉的框架">
-                    <el-option label="Vue" value="Vue" />
-                    <el-option label="React" value="React" />
-                    <el-option label="Angular" value="Angular" />
-                    <el-option label="Django" value="Django" />
-                  </el-select>
+                <el-form-item label="Available hours">
+                  <el-input v-model="form.availableTime" placeholder="Time you can spend contributing" />
                 </el-form-item>
-                <el-form-item label="可投入时长">
-                  <el-input v-model="form.availableTime" placeholder="每周可投入的时间" />
+                <el-form-item label="Motivation to contribute">
+                  <el-input v-model="form.motivation" type="textarea" :rows="2" placeholder="Describe your contribution motivation (e.g., study something)" />
                 </el-form-item>
-                <el-form-item label="贡献动机">
-                  <el-input v-model="form.motivation" type="textarea" :rows="2" placeholder="描述你的贡献动机" />
-                </el-form-item>
-                <el-button type="primary" @click="getFormRecommendedProjects">发送</el-button>
+                <el-button type="primary" @click="getFormRecommendedProjects">Send</el-button>
               </el-form>
             </div>
             <div v-if="message.type === 'project-input'">
-              <el-input v-model="projectUrl" placeholder="输入GitHub项目地址" @keyup.enter="analyzeProject(projectUrl)" />
-              <el-button type="primary" @click="analyzeProject(projectUrl)">发送</el-button>
+              <el-input v-model="projectUrl" placeholder="Please enter the url" @keyup.enter="analyzeProject(projectUrl)" />
+              <el-button type="primary" @click="analyzeProject(projectUrl)">Send</el-button>
             </div>
+            <div v-if="message.endText">{{ message.endText }}</div>
           </el-card>
         </template>
       </div>
     </div>
     <div class="chat-inputs">
       <div class="input-row">
-        <el-input v-model="userInput" placeholder="请输入“更换一批”、“基于表单推荐”或“分析项目”" @keyup.enter="sendMessage" class="input-box" />
+        <el-input v-model="userInput" placeholder="tell me something so that I can recommend a project for you" @keyup.enter="sendMessage" class="input-box" />
         <el-button class="send-button" @click="sendMessage">Send</el-button>
       </div>
     </div>
@@ -326,5 +424,11 @@ const handleUserInput = (input) => {
 
 .send-button:hover {
   background-color: #025bb5;
+}
+
+.project-container {
+  display: flex;
+  align-items: center; /* 垂直居中 */
+  justify-content: space-between; /* 水平间距 */
 }
 </style>

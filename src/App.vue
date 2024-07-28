@@ -19,8 +19,8 @@
     </header>
     <main class="content">
       <div v-if="currentView === 'introduction'">
-        <h1>Welcome to Our Experiment</h1>
-        <p>We are conducting an interactive test combining GitHub and AI to enhance the GitHub user experience. In this test, you will go through various steps sequentially. Please complete each step before moving to the next.</p>
+        <h1>Welcome to the OSSNewcomerCopilot</h1>
+        <p>I am an AI bot that guides OSS newcomers through their first few contributions to help them get started and grow better. I can help in all steps of the open source contribution (shown below).</p>
         <el-timeline style="max-width: 600px; margin: 20px auto;">
           <el-timeline-item
             v-for="(item, index) in navItems"
@@ -30,13 +30,14 @@
             {{ item.fullText }}
           </el-timeline-item>
         </el-timeline>
-        <el-button @click="startExperiment">Confirm Participation</el-button>
+        <p>If you're ready, click the "Start My Contribution" button below and I'll help you through the entire contribution process.</p>
+        <el-button @click="startContribution">Start My Contribution</el-button>
       </div>
       <div v-else>
-        <component :is="currentComponent" />
-        <el-button @click="nextTask">Completed, Next Step</el-button>
+        <component :is="currentComponent" :on-next-step="nextStep"/>
+        <el-button @click="nextStep">Completed, Next Step</el-button>
       </div>
-      <div v-if="displayMessage" class="message-display">{{ displayMessage }}</div>
+      <!-- <div v-if="displayMessage" class="message-display">{{ displayMessage }}</div> -->
     </main>
   </div>
 </template>
@@ -47,6 +48,13 @@ import { ElButton, ElMessageBox, ElTimeline, ElTimelineItem, ElSteps, ElStep } f
 import 'element-plus/theme-chalk/index.css';
 import ChatBot from './components/ChatBot.vue';
 import ProjectRecommendationChat from './components/ProjectRecommendationChat.vue';
+import ContributionGuidelineAnalysis from './components/ContributionGuidelineAnalysis.vue';
+import ProjectStructureAnalysis from './components/ProjectStructureAnalysis.vue';
+import IssueRecommendationChat from './components/IssueRecommendationChat.vue';
+import IssueAnalysis from './components/IssueAnalysis.vue';
+import CodingAndTestingHelp from './components/CodingAndTestingHelp.vue';
+import PreCodeReview from './components/PreCodeReview.vue';
+import PRModification from './components/PRModification.vue';
 
 // 导航项的定义
 const navItems = [
@@ -55,8 +63,7 @@ const navItems = [
   { view: 'project-structure', fullText: 'Project Structure Analysis' },
   { view: 'issue-recommendation', fullText: 'Issue Recommendation' },
   { view: 'issue-analysis', fullText: 'Issue Analysis' },
-  { view: 'coding-help', fullText: 'Coding Help' },
-  { view: 'testing-help', fullText: 'Testing Help' },
+  { view: 'coding-and-testing-help', fullText: 'Coding & Testing Help' },
   { view: 'pre-code-review', fullText: 'Pre-Code Review' },
   { view: 'pr-modification', fullText: 'PR Modification Help' },
 ];
@@ -84,7 +91,7 @@ const switchView = (view, index) => {
 };
 
 // 跳转到下一个任务
-const nextTask = () => {
+const nextStep = () => {
   if (currentTaskIndex.value < navItems.length - 1) {
     currentTaskIndex.value++;
     currentView.value = navItems[currentTaskIndex.value].view;
@@ -95,7 +102,7 @@ const nextTask = () => {
   }
 };
 
-const startExperiment = () => {
+const startContribution = () => {
   currentTaskIndex.value = 0;
   currentView.value = navItems[0].view; // 设置初始任务
 };
@@ -114,21 +121,19 @@ const currentComponent = computed(() => {
     case 'project-recommendation':
       return ProjectRecommendationChat;
     case 'contribution-guideline':
-      return ChatBot;
+      return ContributionGuidelineAnalysis;
     case 'project-structure':
-      return { template: '<p>This is the Project Structure Analysis area.</p>' };
+      return ProjectStructureAnalysis;
     case 'issue-recommendation':
-      return { template: '<p>This is the Issue Recommendation area.</p>' };
+      return IssueRecommendationChat;
     case 'issue-analysis':
-      return { template: '<p>This is the Issue Analysis area.</p>' };
-    case 'coding-help':
-      return { template: '<p>This is the Coding Help area.</p>' };
-    case 'testing-help':
-      return { template: '<p>This is the Testing Help area.</p>' };
+      return IssueAnalysis;
+    case 'coding-and-testing-help':
+      return CodingAndTestingHelp;
     case 'pre-code-review':
-      return { template: '<p>This is the Pre-Code Review area.</p>' };
+      return PreCodeReview;
     case 'pr-modification':
-      return { template: '<p>This is the PR Modification Help area.</p>' };
+      return PRModification;
     default:
       return { template: '<div></div>' };
   }
