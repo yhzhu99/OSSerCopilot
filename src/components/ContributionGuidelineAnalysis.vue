@@ -24,7 +24,7 @@ const getFirstAnalysis = () => {
       "Review, address comments on your PR, and initiate merge along the pull request workflow.",
       "Celebrate your contributions and welcome to the PyTorch Developer community :)!"
     ];
-    catalog.value = ["Setup the developer environment","pull request workflow","Writing documentation","C++ development tips","CUDA development tips","community communicating tips"];
+    catalog.value = ["Setup the developer environment","Pull Request workflow","Writing documentation","C++ development tips","CUDA development tips","Community communicating tips"];
     messages.value.push({
                         messageUnits:
                           [{ 
@@ -167,8 +167,26 @@ const handleUserInput = (input) => {
     }, 500);
   } else if (input.toLowerCase().includes('install prerequisites')) {
     getPrerequisites();
+  } else if (input.toLowerCase().includes('communicat') || input.toLowerCase().includes('6')) {
+    setTimeout(() => {
+      messages.value.push({
+                          messageUnits:
+                          [{ 
+                            text: 'Sure! I will give you some tips of how to communicate with other contributorsin pytorch', 
+                          }],
+                          sender: 'bot'
+                        });
+    }, 500);
   } else {
-    messages.value.push({ text: 'System error: please try again later.', sender: 'bot' });
+    setTimeout(() => {
+      messages.value.push({
+                          messageUnits:
+                          [{ 
+                            text: 'System error: please try again later.', 
+                          }],
+                          sender: 'bot'
+                        });
+    }, 500);
   }
 };
 </script>
@@ -190,33 +208,33 @@ const handleUserInput = (input) => {
             <el-card class="bot-card">
             <div class="header-content">
               <el-avatar src="https://www.svgrepo.com/show/35383/robot.svg" class="avatar" />
-              <span>Bot</span>
+              <span>OSSNewcomerCopilot</span>
             </div>
           <div v-for="(messageUnit, index) in message.messageUnits" :key="index">
             <img v-if="messageUnit.img" :src="messageUnit.img" class="bot-image" />
-            <div v-if="messageUnit.text" v-html="messageUnit.text"></div>
-            <div v-if="messageUnit.type === 'summary'">
+            <div v-if="messageUnit.text" v-html="messageUnit.text" class="message-margin"></div>
+            <div v-if="messageUnit.type === 'summary'" class="message-margin">
                     <ol>
                       <li v-for="(step, index) in messageUnit.data" :key="index">
                         {{ step }}
                       </li>
                     </ol>
             </div>
-            <div v-if="messageUnit.type === 'catalog'">
+            <div v-if="messageUnit.type === 'catalog'" class="message-margin">
                     <ol>
                       <li v-for="(step, index) in messageUnit.data" :key="index">
                         {{ step }}
                       </li>
                     </ol>
             </div>
-            <div v-if="messageUnit.type === 'environment'">
+            <div v-if="messageUnit.type === 'environment'" class="message-margin">
                     <ol>
                       <li v-for="(step, index) in messageUnit.data" :key="index">
                         {{ step }}
                       </li>
                     </ol>
             </div>
-            <div v-if="messageUnit.type === 'prerequisites'">
+            <div v-if="messageUnit.type === 'prerequisites'" class="message-margin">
                     <ul>
                       <li v-for="(step, index) in messageUnit.data" :key="index">
                         <div>{{ step.pstep }}:</div>
@@ -235,7 +253,7 @@ const handleUserInput = (input) => {
     </div>
     <div class="chat-inputs">
       <div class="input-row">
-        <el-input v-model="userInput" placeholder="tell me something so that I can recommend a project for you" @keyup.enter="sendMessage" class="input-box" />
+        <el-input v-model="userInput" placeholder="tell me something so I can help you." @keyup.enter="sendMessage" class="input-box" />
         <el-button class="send-button" @click="sendMessage">Send</el-button>
       </div>
     </div>
@@ -249,6 +267,7 @@ const handleUserInput = (input) => {
   height: 72vh;
   padding: 5px;
   box-sizing: border-box;
+  font-size: 16px;
 }
 
 .chat-messages {
@@ -340,4 +359,9 @@ const handleUserInput = (input) => {
 .send-button:hover {
   background-color: #025bb5;
 }
+
+.message-margin {
+  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+}
+
 </style>

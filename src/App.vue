@@ -20,17 +20,17 @@
     <main class="content">
       <div v-if="currentView === 'introduction'">
         <h1>Welcome to the OSSNewcomerCopilot</h1>
-        <p>I am an AI bot that guides OSS newcomers through their first few contributions to help them get started and grow better. I can help in all steps of the open source contribution (shown below).</p>
+        <p style="font-size: 16px;">I am an AI bot that guides OSS newcomers through their first few contributions to help them get started and grow better. I can help in all steps of the open source contribution (shown below).</p>
         <el-timeline style="max-width: 600px; margin: 20px auto;">
           <el-timeline-item
             v-for="(item, index) in navItems"
             :key="item.view"
             :timestamp="index + 1"
           >
-            {{ item.fullText }}
+            <strong>{{ item.fullText }}</strong>
           </el-timeline-item>
         </el-timeline>
-        <p>If you're ready, click the "Start My Contribution" button below and I'll help you through the entire contribution process.</p>
+        <p style="font-size: 16px;">If you're ready, click the "Start My Contribution" button below and I'll help you through the entire contribution process.</p>
         <el-button @click="startContribution">Start My Contribution</el-button>
       </div>
       <div v-else>

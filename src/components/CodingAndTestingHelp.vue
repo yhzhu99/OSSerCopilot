@@ -248,33 +248,33 @@ const handleUserInput = (input) => {
             <el-card class="bot-card">
             <div class="header-content">
               <el-avatar src="https://www.svgrepo.com/show/35383/robot.svg" class="avatar" />
-              <span>Bot</span>
+              <span>OSSNewcomerCopilot</span>
             </div>
           <div v-for="(messageUnit, index) in message.messageUnits" :key="index">
             <img v-if="messageUnit.img" :src="messageUnit.img" class="bot-image" />
-            <div v-if="messageUnit.text" v-html="messageUnit.text"></div>
-            <div v-if="messageUnit.type === 'catalog'">
+            <div v-if="messageUnit.text" v-html="messageUnit.text" class="message-margin"></div>
+            <div v-if="messageUnit.type === 'catalog'" class="message-margin">
               <ul>
                 <li v-for="(step, index) in messageUnit.data" :key="index">
                   {{ step }}
                 </li>
               </ul>
             </div>
-            <div v-if="messageUnit.type === 'NL2CodeExplanation'">
+            <div v-if="messageUnit.type === 'NL2CodeExplanation'" class="message-margin">
               <ul>
                 <li v-for="(step, index) in messageUnit.data" :key="index">
                   {{ step }}
                 </li>
               </ul>
             </div>
-            <div v-if="messageUnit.type === 'testCodeExplanation'">
+            <div v-if="messageUnit.type === 'testCodeExplanation'" class="message-margin">
               <ul>
                 <li v-for="(step, index) in messageUnit.data" :key="index">
                   {{ step }}
                 </li>
               </ul>
             </div>
-            <div v-if="messageUnit.type === 'showcode'">
+            <div v-if="messageUnit.type === 'showcode'" class="message-margin">
                 <el-card><el-scrollbar><pre v-html="messageUnit.data"></pre></el-scrollbar></el-card>
             </div>
           </div>
@@ -284,7 +284,7 @@ const handleUserInput = (input) => {
     </div>
     <div class="chat-inputs">
       <div class="input-row">
-        <el-input v-model="userInput" placeholder="tell me something so that I can recommend a project for you" @keyup.enter="sendMessage" class="input-box" />
+        <el-input v-model="userInput" placeholder="tell me something so I can help you." @keyup.enter="sendMessage" class="input-box" />
         <el-button class="send-button" @click="sendMessage">Send</el-button>
       </div>
     </div>
@@ -298,6 +298,7 @@ const handleUserInput = (input) => {
   height: 72vh;
   padding: 5px;
   box-sizing: border-box;
+  font-size: 16px;
 }
 
 .chat-messages {
@@ -388,5 +389,9 @@ const handleUserInput = (input) => {
 
 .send-button:hover {
   background-color: #025bb5;
+}
+
+.message-margin {
+  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
 }
 </style>

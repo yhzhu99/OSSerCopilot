@@ -253,11 +253,11 @@ const handleUserInput = (input) => {
           <el-card class="bot-card">
             <div class="header-content">
               <el-avatar src="https://www.svgrepo.com/show/35383/robot.svg" class="avatar" />
-              <span>Bot</span>
+              <span>OSSNewcomerCopilot</span>
             </div>
             <img v-if="message.img" :src="message.img" class="bot-image" />
-            <div v-if="message.text">{{ message.text }}</div>
-            <div v-if="message.type === 'recommendation'">
+            <div v-if="message.text" class="message-margin">{{ message.text }}</div>
+            <div v-if="message.type === 'recommendation'" class="message-margin">
               <el-collapse>
                 <el-collapse-item v-for="project in message.data" :key="project.name" :title="project.name">
                   <div class="project-container">
@@ -281,10 +281,10 @@ const handleUserInput = (input) => {
                 </el-collapse-item>
               </el-collapse>
               <div>
-              <el-button @click="getRecommendedProjects">recommend more</el-button>
+              <el-button class="message-margin" @click="getRecommendedProjects">recommend more</el-button>
               </div>
             </div>
-            <div v-if="message.type === 'form'">
+            <div v-if="message.type === 'form'" class="message-margin">
               <el-form :model="form" label-width="120px" class="recommendation-form">
                 <el-form-item label="Programming Languages">
                   <el-select v-model="form.programmingLanguages" multiple placeholder="Select the programming language of the project you want to contribute">
@@ -309,7 +309,7 @@ const handleUserInput = (input) => {
                 <el-button type="primary" @click="getFormRecommendedProjects">Send</el-button>
               </el-form>
             </div>
-            <div v-if="message.type === 'project-input'">
+            <div v-if="message.type === 'project-input'" class="message-margin">
               <el-input v-model="projectUrl" placeholder="Please enter the url" @keyup.enter="analyzeProject(projectUrl)" />
               <el-button type="primary" @click="analyzeProject(projectUrl)">Send</el-button>
             </div>
@@ -320,7 +320,7 @@ const handleUserInput = (input) => {
     </div>
     <div class="chat-inputs">
       <div class="input-row">
-        <el-input v-model="userInput" placeholder="tell me something so that I can recommend a project for you" @keyup.enter="sendMessage" class="input-box" />
+        <el-input v-model="userInput" placeholder="tell me something so I can help you." @keyup.enter="sendMessage" class="input-box" />
         <el-button class="send-button" @click="sendMessage">Send</el-button>
       </div>
     </div>
@@ -334,6 +334,7 @@ const handleUserInput = (input) => {
   height: 72vh;
   padding: 5px;
   box-sizing: border-box;
+  font-size: 16px;
 }
 
 .chat-messages {
@@ -430,5 +431,9 @@ const handleUserInput = (input) => {
   display: flex;
   align-items: center; /* 垂直居中 */
   justify-content: space-between; /* 水平间距 */
+}
+
+.message-margin {
+  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
 }
 </style>
