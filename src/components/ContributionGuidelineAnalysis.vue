@@ -172,7 +172,7 @@ const handleUserInput = (input) => {
       messages.value.push({
                           messageUnits:
                           [{ 
-                            text: 'Sure! I will give you some tips of how to communicate with other contributorsin pytorch', 
+                            text: 'Sure! I will give you some tips of how to communicate with other contributors in pytorch', 
                           }],
                           sender: 'bot'
                         });
