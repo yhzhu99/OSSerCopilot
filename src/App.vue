@@ -12,7 +12,7 @@
           v-for="(item, index) in navItems"
           :key="index"
           :title="getStepStatus(index)"
-          @click="index <= currentTaskIndex && switchView(item.view, index)"
+          @click="navigateToStep(index)"
         />
       </el-steps>
       <h1 class="current-task-title">{{ currentTask }}</h1>
@@ -34,10 +34,14 @@
         <el-button @click="startContribution">Start My Contribution</el-button>
       </div>
       <div v-else>
-        <component :is="currentComponent" :on-next-step="nextStep"/>
+        <component 
+          :is="currentComponent" 
+          :on-next-step="nextStep"
+          :key="currentView"
+          v-model:form-data="formData[currentView]"
+        />
         <el-button @click="nextStep">Completed, Next Step</el-button>
       </div>
-      <!-- <div v-if="displayMessage" class="message-display">{{ displayMessage }}</div> -->
     </main>
   </div>
 </template>
@@ -56,7 +60,7 @@ import PreCodeReview from './components/PreCodeReview.vue';
 import PRModification from './components/PRModification.vue';
 import { saveToLocalStorage, getFromLocalStorage } from './utils/storage';
 
-// 导航项的定义
+// Navigation items definition
 const navItems = [
   { view: 'project-recommendation', fullText: 'Project Recommendation' },
   { view: 'contribution-guideline', fullText: 'Contribution Guideline Analysis' },
@@ -68,44 +72,47 @@ const navItems = [
   { view: 'pr-modification', fullText: 'PR Modification Help' },
 ];
 
-const displayMessage = ref('');
-const currentTask = computed(() => navItems[currentTaskIndex.value].fullText); // 追踪当前任务
 const currentView = ref(getFromLocalStorage('currentView') || 'introduction');
 const currentTaskIndex = ref(getFromLocalStorage('currentTaskIndex') || 0);
+const furthestReachedStep = ref(getFromLocalStorage('furthestReachedStep') || 0);
+const stepStatus = ref(getFromLocalStorage('stepStatus') || navItems.map(() => 'pending'));
+const formData = ref(getFromLocalStorage('formData') || {});
+const currentTask = computed(() => navItems[currentTaskIndex.value].fullText);
 
-// Watch for changes in currentView and currentTaskIndex
-watch(currentView, (newValue) => {
-  saveToLocalStorage('currentView', newValue);
-});
+// Watch for changes and save to localStorage
+watch(currentView, (newValue) => saveToLocalStorage('currentView', newValue));
+watch(currentTaskIndex, (newValue) => saveToLocalStorage('currentTaskIndex', newValue));
+watch(furthestReachedStep, (newValue) => saveToLocalStorage('furthestReachedStep', newValue));
+watch(stepStatus, (newValue) => saveToLocalStorage('stepStatus', newValue), { deep: true });
+watch(formData, (newValue) => saveToLocalStorage('formData', newValue), { deep: true });
 
-watch(currentTaskIndex, (newValue) => {
-  saveToLocalStorage('currentTaskIndex', newValue);
-});
-
-// 获取步骤状态
+// Get step status
 const getStepStatus = (index) => {
   if (index < currentTaskIndex.value) {
-    return 'OK';
+    return stepStatus.value[index] === 'completed' ? 'OK' : 'Pending';
   } else if (index === currentTaskIndex.value) {
     return 'Cur.';
-  } else {
+  } else if (index <= furthestReachedStep.value) {
     return '...';
+  } else {
+    return 'Locked';
   }
 };
 
-// 切换视图
-const switchView = (view, index) => {
-  currentView.value = view;
-  currentTaskIndex.value = index;
-  saveToLocalStorage('currentView', view);
-  saveToLocalStorage('currentTaskIndex', index);
+// Navigate to a specific step
+const navigateToStep = (index) => {
+  if (index <= furthestReachedStep.value) {
+    currentTaskIndex.value = index;
+    currentView.value = navItems[index].view;
+  }
 };
 
-
-// 跳转到下一个任务
+// Move to next step
 const nextStep = () => {
+  stepStatus.value[currentTaskIndex.value] = 'completed';
   if (currentTaskIndex.value < navItems.length - 1) {
     currentTaskIndex.value++;
+    furthestReachedStep.value = Math.max(furthestReachedStep.value, currentTaskIndex.value);
     currentView.value = navItems[currentTaskIndex.value].view;
   } else {
     ElMessageBox.alert('You have completed all the tasks.', 'Congratulations', {
@@ -116,18 +123,13 @@ const nextStep = () => {
 
 const startContribution = () => {
   currentTaskIndex.value = 0;
-  currentView.value = navItems[0].view; // 设置初始任务
+  furthestReachedStep.value = 0;
+  currentView.value = navItems[0].view;
+  stepStatus.value = navItems.map(() => 'pending');
 };
 
-onMounted(() => {
-  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    if (request.type === "FROM_BACKGROUND") {
-      displayMessage.value = request.message;
-    }
-  });
-});
 
-// 计算当前显示的组件
+// Compute current component
 const currentComponent = computed(() => {
   switch (currentView.value) {
     case 'project-recommendation':
@@ -149,6 +151,15 @@ const currentComponent = computed(() => {
     default:
       return { template: '<div></div>' };
   }
+});
+
+onMounted(() => {
+  // Initialize formData for each view if not already present
+  navItems.forEach(item => {
+    if (!formData.value[item.view]) {
+      formData.value[item.view] = {};
+    }
+  });
 });
 </script>
 
