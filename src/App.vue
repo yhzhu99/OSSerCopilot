@@ -43,10 +43,9 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { ElButton, ElMessageBox, ElTimeline, ElTimelineItem, ElSteps, ElStep } from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
-import ChatBot from './components/ChatBot.vue';
 import ProjectRecommendationChat from './components/ProjectRecommendationChat.vue';
 import ContributionGuidelineAnalysis from './components/ContributionGuidelineAnalysis.vue';
 import ProjectStructureAnalysis from './components/ProjectStructureAnalysis.vue';
@@ -55,6 +54,7 @@ import IssueAnalysis from './components/IssueAnalysis.vue';
 import CodingAndTestingHelp from './components/CodingAndTestingHelp.vue';
 import PreCodeReview from './components/PreCodeReview.vue';
 import PRModification from './components/PRModification.vue';
+import { saveToLocalStorage, getFromLocalStorage } from './utils/storage';
 
 // 导航项的定义
 const navItems = [
@@ -69,9 +69,18 @@ const navItems = [
 ];
 
 const displayMessage = ref('');
-const currentView = ref('introduction'); // 初始视图为引导页
-const currentTaskIndex = ref(0);
 const currentTask = computed(() => navItems[currentTaskIndex.value].fullText); // 追踪当前任务
+const currentView = ref(getFromLocalStorage('currentView') || 'introduction');
+const currentTaskIndex = ref(getFromLocalStorage('currentTaskIndex') || 0);
+
+// Watch for changes in currentView and currentTaskIndex
+watch(currentView, (newValue) => {
+  saveToLocalStorage('currentView', newValue);
+});
+
+watch(currentTaskIndex, (newValue) => {
+  saveToLocalStorage('currentTaskIndex', newValue);
+});
 
 // 获取步骤状态
 const getStepStatus = (index) => {
@@ -88,7 +97,10 @@ const getStepStatus = (index) => {
 const switchView = (view, index) => {
   currentView.value = view;
   currentTaskIndex.value = index;
+  saveToLocalStorage('currentView', view);
+  saveToLocalStorage('currentTaskIndex', index);
 };
+
 
 // 跳转到下一个任务
 const nextStep = () => {

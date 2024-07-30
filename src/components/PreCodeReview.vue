@@ -1,14 +1,31 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag, ElForm, ElFormItem, ElSelect, ElOption, ElScrollbar, ElIcon } from 'element-plus';
 import 'element-plus/dist/index.css';
+import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
 // 聊天消息列表
-const messages = ref([]);
+const messages = ref(getFromLocalStorage('preCodeReviewMessages') || []);
 const userInput = ref('');
-const catalog = ref([]);
-const PRDescriptionAdvice = ref(``)
-const commitMessageAdvice = ref(``)
+const catalog = ref(getFromLocalStorage('preCodeReviewCatalog') || []);
+const PRDescriptionAdvice = ref(getFromLocalStorage('PRDescriptionAdvice') || '');
+const commitMessageAdvice = ref(getFromLocalStorage('commitMessageAdvice') || '');
+
+watch(messages, (newValue) => {
+  saveToLocalStorage('preCodeReviewMessages', newValue);
+}, { deep: true });
+
+watch(catalog, (newValue) => {
+  saveToLocalStorage('preCodeReviewCatalog', newValue);
+}, { deep: true });
+
+watch(PRDescriptionAdvice, (newValue) => {
+  saveToLocalStorage('PRDescriptionAdvice', newValue);
+});
+
+watch(commitMessageAdvice, (newValue) => {
+  saveToLocalStorage('commitMessageAdvice', newValue);
+});
 
 // 模拟用户历史数据
 const userHistory = reactive({

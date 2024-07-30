@@ -1,7 +1,8 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag, ElForm, ElFormItem, ElSelect, ElOption } from 'element-plus';
 import 'element-plus/dist/index.css';
+import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
 // 模拟用户历史数据
 const userHistory = reactive({
@@ -25,17 +26,47 @@ const props = defineProps({
 });
 
 // 推荐项目列表
-const recommendedProjects = ref([]);
-const recommendedProjects2 = ref([]);
-const recommendedProjects3 = ref([]);
-const formRecommendedProjects = ref([]);
-const recommendedNumber = ref(2);
+const catalog = ref(getFromLocalStorage('projectRecommendationCatalog') || []);
+const recommendedProjects = ref(getFromLocalStorage('recommendedProjects') || []);
+const recommendedProjects2 = ref(getFromLocalStorage('recommendedProjects2') || []);
+const recommendedProjects3 = ref(getFromLocalStorage('recommendedProjects3') || []);
+const formRecommendedProjects = ref(getFromLocalStorage('formRecommendedProjects') || []);
+const recommendedNumber = ref(getFromLocalStorage('recommendedNumber') || 2);
 
 // 聊天消息列表
-const messages = ref([]);
+const messages = ref(getFromLocalStorage('projectRecommendationMessages') || []);
 const userInput = ref('');
 const projectUrl = ref('https://github.com/pytorch/pytorch'); // 默认值设置为 pytorch 的 GitHub 仓库地址
 const projectAnalysis = ref('');
+
+// Watch for changes in the reactive data
+watch(messages, (newValue) => {
+  saveToLocalStorage('projectRecommendationMessages', newValue);
+}, { deep: true });
+
+watch(catalog, (newValue) => {
+  saveToLocalStorage('projectRecommendationCatalog', newValue);
+}, { deep: true });
+
+watch(recommendedProjects, (newValue) => {
+  saveToLocalStorage('recommendedProjects', newValue);
+}, { deep: true });
+
+watch(recommendedProjects2, (newValue) => {
+  saveToLocalStorage('recommendedProjects2', newValue);
+}, { deep: true });
+
+watch(recommendedProjects3, (newValue) => {
+  saveToLocalStorage('recommendedProjects3', newValue);
+}, { deep: true });
+
+watch(formRecommendedProjects, (newValue) => {
+  saveToLocalStorage('formRecommendedProjects', newValue);
+}, { deep: true });
+
+watch(recommendedNumber, (newValue) => {
+  saveToLocalStorage('recommendedNumber', newValue);
+});
 
 // 获取推荐项目
 const getFirstRecommendedProjects = () => {

@@ -1,16 +1,41 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag, ElForm, ElFormItem, ElSelect, ElOption, ElScrollbar } from 'element-plus';
 import 'element-plus/dist/index.css';
+import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
 // 聊天消息列表
-const messages = ref([]);
+const messages = ref(getFromLocalStorage('issueAnalysisMessages') || []);
 const userInput = ref('');
-const catalog = ref([])
-const issueReappearVersion = ref([])
-const issueReappearCode = ref('')
-const relatedIssuRecommendationCode = ref('')
-const solutionSteps = ref([])
+const catalog = ref(getFromLocalStorage('issueAnalysisCatalog') || []);
+const issueReappearVersion = ref(getFromLocalStorage('issueReappearVersion') || []);
+const issueReappearCode = ref(getFromLocalStorage('issueReappearCode') || '');
+const relatedIssuRecommendationCode = ref(getFromLocalStorage('relatedIssuRecommendationCode') || '');
+const solutionSteps = ref(getFromLocalStorage('solutionSteps') || []);
+
+watch(messages, (newValue) => {
+  saveToLocalStorage('issueAnalysisMessages', newValue);
+}, { deep: true });
+
+watch(catalog, (newValue) => {
+  saveToLocalStorage('issueAnalysisCatalog', newValue);
+}, { deep: true });
+
+watch(issueReappearVersion, (newValue) => {
+  saveToLocalStorage('issueReappearVersion', newValue);
+}, { deep: true });
+
+watch(issueReappearCode, (newValue) => {
+  saveToLocalStorage('issueReappearCode', newValue);
+});
+
+watch(relatedIssuRecommendationCode, (newValue) => {
+  saveToLocalStorage('relatedIssuRecommendationCode', newValue);
+});
+
+watch(solutionSteps, (newValue) => {
+  saveToLocalStorage('solutionSteps', newValue);
+}, { deep: true });
 
 // 获取issue分析
 const getFirstAnalysis = () => {

@@ -1,7 +1,8 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag, ElForm, ElFormItem, ElSelect, ElOption } from 'element-plus';
 import 'element-plus/dist/index.css';
+import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
 // 模拟用户历史数据
 const userHistory = reactive({
@@ -25,17 +26,47 @@ const props = defineProps({
 });
 
 // 推荐项目列表
-const recommendedIssues = ref([]);
-const recommendedIssues2 = ref([]);
-const recommendedIssues3 = ref([]);
-const formRecommendedIssues = ref([]);
-const recommendedNumber = ref(2);
+const recommendedIssues = ref(getFromLocalStorage('recommendedIssues') || []);
+const recommendedIssues2 = ref(getFromLocalStorage('recommendedIssues2') || []);
+const recommendedIssues3 = ref(getFromLocalStorage('recommendedIssues3') || []);
+const formRecommendedIssues = ref(getFromLocalStorage('formRecommendedIssues') || []);
+const recommendedNumber = ref(getFromLocalStorage('issueRecommendedNumber') || 2);
 
 // 聊天消息列表
-const messages = ref([]);
+const messages = ref(getFromLocalStorage('issueRecommendationMessages') || []);
 const userInput = ref('');
 const issueUrl = ref('https://github.com/pytorch/pytorch/issues/130861'); // 默认值设置为 pytorch 的 GitHub 仓库地址
-const issueAnalysis = ref([]);
+const issueAnalysis = ref(getFromLocalStorage('issueAnalysis') || []);
+
+
+watch(messages, (newValue) => {
+  saveToLocalStorage('issueRecommendationMessages', newValue);
+}, { deep: true });
+
+watch(recommendedIssues, (newValue) => {
+  saveToLocalStorage('recommendedIssues', newValue);
+}, { deep: true });
+
+watch(recommendedIssues2, (newValue) => {
+  saveToLocalStorage('recommendedIssues2', newValue);
+}, { deep: true });
+
+watch(recommendedIssues3, (newValue) => {
+  saveToLocalStorage('recommendedIssues3', newValue);
+}, { deep: true });
+
+watch(formRecommendedIssues, (newValue) => {
+  saveToLocalStorage('formRecommendedIssues', newValue);
+}, { deep: true });
+
+watch(recommendedNumber, (newValue) => {
+  saveToLocalStorage('issueRecommendedNumber', newValue);
+});
+
+watch(issueAnalysis, (newValue) => {
+  saveToLocalStorage('issueAnalysis', newValue);
+}, { deep: true });
+
 
 // 获取推荐项目
 const getFirstRecommendedIssues = () => {

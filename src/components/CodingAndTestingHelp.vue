@@ -1,17 +1,46 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag, ElForm, ElFormItem, ElSelect, ElOption, ElScrollbar } from 'element-plus';
 import 'element-plus/dist/index.css';
+import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
 // 聊天消息列表
-const messages = ref([]);
+const messages = ref(getFromLocalStorage('codingTestingMessages') || []);
 const userInput = ref('');
-const catalog = ref([])
-const firstExampleCode = ref('')
-const NL2Code = ref('')
-const NL2CodeExplanation = ref([])
-const testCode = ref('')
-const testCodeExplanation = ref([])
+const catalog = ref(getFromLocalStorage('codingTestingCatalog') || []);
+const firstExampleCode = ref(getFromLocalStorage('firstExampleCode') || '');
+const NL2Code = ref(getFromLocalStorage('NL2Code') || '');
+const NL2CodeExplanation = ref(getFromLocalStorage('NL2CodeExplanation') || []);
+const testCode = ref(getFromLocalStorage('testCode') || '');
+const testCodeExplanation = ref(getFromLocalStorage('testCodeExplanation') || []);
+
+watch(messages, (newValue) => {
+  saveToLocalStorage('codingTestingMessages', newValue);
+}, { deep: true });
+
+watch(catalog, (newValue) => {
+  saveToLocalStorage('codingTestingCatalog', newValue);
+}, { deep: true });
+
+watch(firstExampleCode, (newValue) => {
+  saveToLocalStorage('firstExampleCode', newValue);
+});
+
+watch(NL2Code, (newValue) => {
+  saveToLocalStorage('NL2Code', newValue);
+});
+
+watch(NL2CodeExplanation, (newValue) => {
+  saveToLocalStorage('NL2CodeExplanation', newValue);
+}, { deep: true });
+
+watch(testCode, (newValue) => {
+  saveToLocalStorage('testCode', newValue);
+});
+
+watch(testCodeExplanation, (newValue) => {
+  saveToLocalStorage('testCodeExplanation', newValue);
+}, { deep: true });
 
 // 获取第一段代码
 const getFirstCode = () => {

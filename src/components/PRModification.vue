@@ -1,15 +1,36 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag, ElForm, ElFormItem, ElSelect, ElOption, ElScrollbar, ElIcon } from 'element-plus';
 import 'element-plus/dist/index.css';
+import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
 // 聊天消息列表
-const messages = ref([]);
+const messages = ref(getFromLocalStorage('prModificationMessages') || []);
 const userInput = ref('');
-const catalog = ref([]);
-const commitMessageAdvice = ref(``)
-const PRCodeModificationAdvice = ref([])
-const PRReferCode = ref(``)
+const catalog = ref(getFromLocalStorage('prModificationCatalog') || []);
+const commitMessageAdvice = ref(getFromLocalStorage('prModificationCommitMessageAdvice') || '');
+const PRCodeModificationAdvice = ref(getFromLocalStorage('PRCodeModificationAdvice') || []);
+const PRReferCode = ref(getFromLocalStorage('PRReferCode') || '');
+
+watch(messages, (newValue) => {
+  saveToLocalStorage('prModificationMessages', newValue);
+}, { deep: true });
+
+watch(catalog, (newValue) => {
+  saveToLocalStorage('prModificationCatalog', newValue);
+}, { deep: true });
+
+watch(commitMessageAdvice, (newValue) => {
+  saveToLocalStorage('prModificationCommitMessageAdvice', newValue);
+});
+
+watch(PRCodeModificationAdvice, (newValue) => {
+  saveToLocalStorage('PRCodeModificationAdvice', newValue);
+}, { deep: true });
+
+watch(PRReferCode, (newValue) => {
+  saveToLocalStorage('PRReferCode', newValue);
+});
 
 // 引入SVG图标
 import { SuccessFilled, WarningFilled, CircleCloseFilled } from '@element-plus/icons-vue'

@@ -1,14 +1,32 @@
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag, ElForm, ElFormItem, ElSelect, ElOption } from 'element-plus';
 import 'element-plus/dist/index.css';
+import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
 // 聊天消息列表
-const messages = ref([]);
+const messages = ref(getFromLocalStorage('contributionGuidelineMessages') || []);
 const userInput = ref('');
-const catalog = ref([])
-const summaryStep = ref([])
-const prerequisites = ref([])
+const catalog = ref(getFromLocalStorage('contributionGuidelineCatalog') || []);
+const summaryStep = ref(getFromLocalStorage('contributionGuidelineSummaryStep') || []);
+const prerequisites = ref(getFromLocalStorage('contributionGuidelinePrerequisites') || []);
+
+watch(messages, (newValue) => {
+  saveToLocalStorage('contributionGuidelineMessages', newValue);
+}, { deep: true });
+
+watch(catalog, (newValue) => {
+  saveToLocalStorage('contributionGuidelineCatalog', newValue);
+}, { deep: true });
+
+watch(summaryStep, (newValue) => {
+  saveToLocalStorage('contributionGuidelineSummaryStep', newValue);
+}, { deep: true });
+
+watch(prerequisites, (newValue) => {
+  saveToLocalStorage('contributionGuidelinePrerequisites', newValue);
+}, { deep: true });
+
 
 // 获取贡献指南分析
 const getFirstAnalysis = () => {

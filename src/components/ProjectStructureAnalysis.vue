@@ -2,20 +2,35 @@
 import { ref, reactive, onMounted, watch } from 'vue';
 import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag, ElForm, ElFormItem, ElSelect, ElOption ,ElScrollbar, ElTree} from 'element-plus';
 import 'element-plus/dist/index.css';
+import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
 // 聊天消息列表
-const messages = ref([]);
+const messages = ref(getFromLocalStorage('projectStructureMessages') || []);
 const userInput = ref('');
+const structureData = ref(getFromLocalStorage('projectStructureData') || []);
+const functionAnalysisData1 = ref(getFromLocalStorage('functionAnalysisData1') || []);
+const functionAnalysisData2 = ref(getFromLocalStorage('functionAnalysisData2') || []);
 
 const defaultProps = {
   children: 'children',
   label: 'label',
 }
 
-const structureData = ref([]);
-const functionAnalysisData1 = ref([]);
-const functionAnalysisData2 = ref([]);
+watch(messages, (newValue) => {
+  saveToLocalStorage('projectStructureMessages', newValue);
+}, { deep: true });
 
+watch(structureData, (newValue) => {
+  saveToLocalStorage('projectStructureData', newValue);
+}, { deep: true });
+
+watch(functionAnalysisData1, (newValue) => {
+  saveToLocalStorage('functionAnalysisData1', newValue);
+}, { deep: true });
+
+watch(functionAnalysisData2, (newValue) => {
+  saveToLocalStorage('functionAnalysisData2', newValue);
+}, { deep: true });
 
 // 获取贡献指南分析
 const getFirstAnalysis = () => {
