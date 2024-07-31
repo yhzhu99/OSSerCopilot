@@ -19,13 +19,15 @@
     </header>
     <main class="content">
       <div v-if="currentView === 'introduction'">
-        <h1>Welcome to the OSSNewcomerCopilot</h1>
-        <p style="font-size: 16px;">I am an AI bot that guides OSS newcomers through their first few contributions to help them get started and grow better. I can help in all steps of the open source contribution (shown below).</p>
+        <h1>Welcome to the OSSNewcomerCopilot 🎁</h1>
+        <p style="font-size: 16px;">I am an <strong>AI bot</strong> 🤖️ that guides <strong>OSS newcomers</strong> through their first few contributions to help them get started and grow better. </p>
+        <p style="font-size: 16px;">I can help in all steps of the open source contribution (shown below):</p>
         <el-timeline style="max-width: 600px; margin: 20px auto;">
           <el-timeline-item
             v-for="(item, index) in navItems"
             :key="item.view"
             :timestamp="index + 1"
+            :color="item.color"
           >
             <strong>{{ item.fullText }}</strong>
           </el-timeline-item>
@@ -48,7 +50,7 @@
 
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
-import { ElButton, ElMessageBox, ElTimeline, ElTimelineItem, ElSteps, ElStep } from 'element-plus';
+import { ElButton, ElMessageBox, ElTimeline, ElTimelineItem, ElSteps, ElStep, colProps } from 'element-plus';
 import 'element-plus/theme-chalk/index.css';
 import ProjectRecommendationChat from './components/ProjectRecommendationChat.vue';
 import ContributionGuidelineAnalysis from './components/ContributionGuidelineAnalysis.vue';
@@ -62,14 +64,14 @@ import { saveToLocalStorage, getFromLocalStorage } from './utils/storage';
 
 // Navigation items definition
 const navItems = [
-  { view: 'project-recommendation', fullText: 'Project Recommendation' },
-  { view: 'contribution-guideline', fullText: 'Contribution Guideline Analysis' },
-  { view: 'project-structure', fullText: 'Project Structure Analysis' },
-  { view: 'issue-recommendation', fullText: 'Issue Recommendation' },
-  { view: 'issue-analysis', fullText: 'Issue Analysis' },
-  { view: 'coding-and-testing-help', fullText: 'Coding & Testing Help' },
-  { view: 'pre-code-review', fullText: 'Pre-Code Review' },
-  { view: 'pr-modification', fullText: 'PR Modification Help' },
+  { view: 'project-recommendation', fullText: 'Project Recommendation', color: '#409EFF'},
+  { view: 'contribution-guideline', fullText: 'Contribution Guideline Analysis', color: '#67C23A' },
+  { view: 'project-structure', fullText: 'Project Structure Analysis', color: '#E6A23C' },
+  { view: 'issue-recommendation', fullText: 'Issue Recommendation', color: '#909399' },
+  { view: 'issue-analysis', fullText: 'Issue Analysis', color: '#F56C6C' },
+  { view: 'coding-and-testing-help', fullText: 'Coding & Testing Help', color: '#58B7FF' },
+  { view: 'pre-code-review', fullText: 'Pre-Code Review', color: '#FFC048' },
+  { view: 'pr-modification', fullText: 'PR Modification Help', color: '#409EFF' },
 ];
 
 const currentView = ref(getFromLocalStorage('currentView') || 'introduction');
@@ -170,6 +172,9 @@ onMounted(() => {
   overflow: hidden;
   font-family: Arial, sans-serif; /* 确保全局应用 */
   color: #333333; /* 全局字体颜色 */
+  background-image: url('/icons/botbg.png'); /* 添加背景图片 */
+  background-size: cover; /* 确保背景图片覆盖整个元素 */
+  background-position: center; /* 图片居中显示 */
 }
 
 .header {
