@@ -130,7 +130,6 @@ const startContribution = () => {
   stepStatus.value = navItems.map(() => 'pending');
 };
 
-
 // Compute current component
 const currentComponent = computed(() => {
   switch (currentView.value) {
@@ -170,11 +169,8 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  font-family: Arial, sans-serif; /* 确保全局应用 */
-  color: #333333; /* 全局字体颜色 */
-  background-image: url('/icons/botbg.png'); /* 添加背景图片 */
-  background-size: cover; /* 确保背景图片覆盖整个元素 */
-  background-position: center; /* 图片居中显示 */
+  font-family: Arial, sans-serif; /* Ensure global application */
+  color: #333333; /* Global font color */
 }
 
 .header {
