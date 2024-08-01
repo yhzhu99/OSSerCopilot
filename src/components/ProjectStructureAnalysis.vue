@@ -212,18 +212,18 @@ const getFunctionAnalysis = () => {
       "Error Translation: In some cases, it translates caught C++ exceptions into corresponding Python exceptions."
     ];
     functionAnalysisData2.value = [
-      "python_error and py::error_already_set: Likely pybind11-related exceptions.",
+      "python_error and <span class='code-style'>py::error_already_set</span>: Likely pybind11-related exceptions.",
       "Standard Python exceptions: Such as IndexError, ValueError, TypeError, NotImplementedError.",
       "PyTorch-specific exceptions: Like LinAlgError (linear algebra error), OutOfMemoryError, etc.",
       "Distributed computing related exceptions: Such as DistBackendError, DistNetworkError, etc.",
-      "Generic PyTorch exception: Catches torch::PyTorchError and converts it to Python's RuntimeError."
+      "Generic PyTorch exception: Catches <span class=\'code-style\'>torch::PyTorchError</span> and converts it to Python's RuntimeError."
     ]
     messages.value.push({
                           messageUnits:
                           [{
                             type: 'functionAnalysis1',  
                             data: functionAnalysisData1.value, 
-                            text: 'This code defines a macro named CATCH_CORE_ERRORS, which is designed to catch and handle various exceptions that may occur in PyTorch (a popular machine learning library). Here\'s an explanation of its main functions:', 
+                            text: 'This code defines a macro named <span class=\'code-style\'>CATCH_CORE_ERRORS</span>, which is designed to catch and handle various exceptions that may occur in PyTorch (a popular machine learning library). Here\'s an explanation of its main functions:', 
                           },
                           {
                             type: 'functionAnalysis2',  
@@ -292,16 +292,12 @@ const handleUserInput = (input) => {
             </div>
             <div v-if="messageUnit.type === 'functionAnalysis1'" class="message-margin">
                     <ol>
-                      <li v-for="(step, index) in messageUnit.data" :key="index">
-                        {{ step }}
-                      </li>
+                      <li v-for="(step, index) in messageUnit.data" :key="index" v-html="step"></li>
                     </ol>
             </div>
             <div v-if="messageUnit.type === 'functionAnalysis2'" class="message-margin">
                     <ul>
-                      <li v-for="(step, index) in messageUnit.data" :key="index">
-                        {{ step }}
-                      </li>
+                      <li v-for="(step, index) in messageUnit.data" :key="index" v-html="step"></li>
                     </ul>
             </div>
           </div>
@@ -420,5 +416,11 @@ const handleUserInput = (input) => {
 
 .message-margin {
   margin: 10px 0;
+}
+
+:deep(.code-style) {
+  background-color: #bbb8b86d;
+  color: #333;
+  font-family: monospace;
 }
 </style>
