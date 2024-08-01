@@ -465,11 +465,11 @@ const handleUserInput = (input) => {
 
 .project-container {
   display: flex;
-  align-items: center; /* 垂直居中 */
-  justify-content: space-between; /* 水平间距 */
+  align-items: center;
+  justify-content: space-between;
 }
 
 .message-margin {
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  margin: 10px 0;
 }
 </style>

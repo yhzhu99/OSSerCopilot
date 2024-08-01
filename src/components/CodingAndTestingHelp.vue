@@ -4,7 +4,7 @@ import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag,
 import 'element-plus/dist/index.css';
 import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
-// 聊天消息列表
+// Chat message list
 const messages = ref(getFromLocalStorage('codingTestingMessages') || []);
 const userInput = ref('');
 const catalog = ref(getFromLocalStorage('codingTestingCatalog') || []);
@@ -14,6 +14,7 @@ const NL2CodeExplanation = ref(getFromLocalStorage('NL2CodeExplanation') || []);
 const testCode = ref(getFromLocalStorage('testCode') || '');
 const testCodeExplanation = ref(getFromLocalStorage('testCodeExplanation') || []);
 
+// Watch for changes and save to local storage
 watch(messages, (newValue) => {
   saveToLocalStorage('codingTestingMessages', newValue);
 }, { deep: true });
@@ -42,7 +43,7 @@ watch(testCodeExplanation, (newValue) => {
   saveToLocalStorage('testCodeExplanation', newValue);
 }, { deep: true });
 
-// 获取第一段代码
+// Get the first code snippet
 const getFirstCode = () => {
   setTimeout(() => {
     firstExampleCode.value = "import torch.fx\nfrom torch.fx.proxy import CapturedTraceback\n\nclass Tracer(torch.fx.Tracer):\n    def create_proxy(self, kind, target, args, kwargs, name, type_expr=None, proxy_factory_fn=None):\n        proxy = super().create_proxy(kind, target, args, kwargs, name, type_expr, proxy_factory_fn)\n        if self.record_stack_traces and not proxy.node.stack_trace:\n            proxy.node.stack_trace = self._find_user_frame2_4(''.join(CapturedTraceback.extract().format()))\n        return proxy\n\n    def _find_user_frame2_4(self, stack_trace):\n        stack_trace = stack_trace.split('\n')\n        if 'torch/fx/proxy.py' in stack_trace[-3]:\n            stack_trace = stack_trace[:-1]\n            while len(stack_trace) > 2 and '/fx/' in stack_trace[-2]:\n                stack_trace = stack_trace[:-2]\n        return '\\n'.join(stack_trace)";
@@ -53,29 +54,28 @@ const getFirstCode = () => {
       "Test Case Generation",
     ];
     messages.value.push({
-                        messageUnits:
-                          [
-                            { 
-                              type: 'showcode', 
-                              data: firstExampleCode.value, 
-                              text: 'According to the analysis we have done before, the following code may help you to solve this issue, you can refer to it and make any modification, note that it may not be necessarily correct', 
-                            },
-                            { 
-                              type: 'catalog', 
-                              data: catalog.value, 
-                              text: 'You can always ask me for help during code writing and test writing, for example:', 
-                            },
-                            {
-                              text : 'But when it comes to problems, it\'s better for you to prioritise independent thinking.'
-                            }
-                          ],
-                        sender: 'bot'
-                      });
+      messageUnits: [
+        { 
+          type: 'showcode', 
+          data: firstExampleCode.value, 
+          text: 'According to the analysis we have done before, the following code may help you to solve this issue, you can refer to it and make any modification, note that it may not be necessarily correct', 
+        },
+        { 
+          type: 'catalog', 
+          data: catalog.value, 
+          text: 'You can always ask me for help during code writing and test writing, for example:', 
+        },
+        {
+          text : 'But when it comes to problems, it\'s better for you to prioritise independent thinking.'
+        }
+      ],
+      sender: 'bot'
+    });
   }, 500);
 };
 
 const initialized = ref(getFromLocalStorage('codingTestingInitialized') === 'true');
-// 初始化
+// Initialize
 onMounted(() => {
   if (!initialized.value) {
     getFirstCode();
@@ -84,7 +84,7 @@ onMounted(() => {
   }
 });
 
-// 发送消息
+// Send message
 const sendMessage = () => {
   if (userInput.value.trim()) {
     messages.value.push({ text: userInput.value, sender: 'user' });
@@ -93,6 +93,7 @@ const sendMessage = () => {
   }
 };
 
+// Get Natural Language to Code example
 const getNL2Code = () => {
   setTimeout(() => {
     NL2CodeExplanation.value = [
@@ -130,24 +131,24 @@ assert 'code: return x + self.linear(x)' in sym.print_readable()
 assert 'code: return x + self.m1(x)' in sym.print_readable()
 `;
     messages.value.push({
-                        messageUnits:
-                          [
-                            { 
-                              type: 'showcode', 
-                              data: NL2Code.value, 
-                              text: 'Sure! Here\'s the code for how to use this fixed version of the Tracer.', 
-                            },
-                            { 
-                              type: 'NL2CodeExplanation', 
-                              data: NL2CodeExplanation.value, 
-                              text: 'In this code, we replace the original torch.fx.Tracer() with an instance of this new Tracer class:', 
-                            },
-                          ],
-                        sender: 'bot'
-                        });
+      messageUnits: [
+        { 
+          type: 'showcode', 
+          data: NL2Code.value, 
+          text: 'Sure! Here\'s the code for how to use this fixed version of the Tracer.', 
+        },
+        { 
+          type: 'NL2CodeExplanation', 
+          data: NL2CodeExplanation.value, 
+          text: 'In this code, we replace the original torch.fx.Tracer() with an instance of this new Tracer class:', 
+        },
+      ],
+      sender: 'bot'
+    });
   }, 500);
 };
 
+// Get test code
 const getTestCode = () => {
   setTimeout(() => {
     testCodeExplanation.value = [
@@ -213,26 +214,24 @@ File "/path/to/torch/fx/other_file.py", line 50, in other_function
 if __name__ == '__main__':
     unittest.main()`;
     messages.value.push({
-                        messageUnits:
-                          [
-                            { 
-                              type: 'showcode', 
-                              data: testCode.value, 
-                              text: 'Certainly! Here\'s a unit test case for the custom Tracer class you\'ve provided. This test case will verify the functionality of the create_proxy method and the _find_user_frame2_4 method.', 
-                            },
-                            { 
-                              type: 'testCodeExplanation', 
-                              data: testCodeExplanation.value, 
-                              text: 'This test case includes three tests:', 
-                            },
-                          ],
-                        sender: 'bot'
-                        });
+      messageUnits: [
+        { 
+          type: 'showcode', 
+          data: testCode.value, 
+          text: 'Certainly! Here\'s a unit test case for the custom Tracer class you\'ve provided. This test case will verify the functionality of the create_proxy method and the _find_user_frame2_4 method.', 
+        },
+        { 
+          type: 'testCodeExplanation', 
+          data: testCodeExplanation.value, 
+          text: 'This test case includes three tests:', 
+        },
+      ],
+      sender: 'bot'
+    });
   }, 500);
 };
 
-
-// 处理用户输入
+// Handle user input
 const handleUserInput = (input) => {
   if (input.toLowerCase().includes('use this')) {
     getNL2Code();
@@ -241,24 +240,24 @@ const handleUserInput = (input) => {
   } else if (input.toLowerCase().includes('translation') || input.toLowerCase().includes('comprehension')) {
     setTimeout(() => {
       messages.value.push({
-                        messageUnits:
-                          [
-                            { 
-                              text: 'Sure! Please provide your code', 
-                            },
-                          ],
-                        sender: 'bot'
-                        });
-      }, 500);
+        messageUnits: [
+          { 
+            text: 'Sure! Please provide your code', 
+          },
+        ],
+        sender: 'bot'
+      });
+    }, 500);
   } else {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'System error: please try again later.', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [
+          { 
+            text: 'System error: please try again later.', 
+          }
+        ],
+        sender: 'bot'
+      });
     }, 500);
   }
 };
@@ -425,6 +424,6 @@ const handleUserInput = (input) => {
 }
 
 .message-margin {
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  margin: 10px 0;
 }
 </style>

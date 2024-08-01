@@ -394,6 +394,6 @@ const handleUserInput = (input) => {
 }
 
 .message-margin {
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  margin: 10px 0;
 }
 </style>

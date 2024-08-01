@@ -4,7 +4,7 @@ import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag,
 import 'element-plus/dist/index.css';
 import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
-// 聊天消息列表
+// Chat message list
 const messages = ref(getFromLocalStorage('issueAnalysisMessages') || []);
 const userInput = ref('');
 const catalog = ref(getFromLocalStorage('issueAnalysisCatalog') || []);
@@ -13,6 +13,7 @@ const issueReappearCode = ref(getFromLocalStorage('issueReappearCode') || '');
 const relatedIssuRecommendationCode = ref(getFromLocalStorage('relatedIssuRecommendationCode') || '');
 const solutionSteps = ref(getFromLocalStorage('solutionSteps') || []);
 
+// Watch for changes and save to local storage
 watch(messages, (newValue) => {
   saveToLocalStorage('issueAnalysisMessages', newValue);
 }, { deep: true });
@@ -37,7 +38,7 @@ watch(solutionSteps, (newValue) => {
   saveToLocalStorage('solutionSteps', newValue);
 }, { deep: true });
 
-// 获取issue分析
+// Get initial issue analysis
 const getFirstAnalysis = () => {
   setTimeout(() => {
     catalog.value = [
@@ -47,24 +48,24 @@ const getFirstAnalysis = () => {
       "Solution Steps Analysis",
     ];
     messages.value.push({
-                        messageUnits:
-                          [
-                            { 
-                              type: 'catalog', 
-                              data: catalog.value, 
-                              text: 'I see that you have selected a GOOD FIRST ISSUE <a href="https://github.com/pytorch/pytorch/issues/130861" target="_blank">#130861</a> in Pytorch, and in this step I can perform a comprehensive issue analysis for you, including the following:', 
-                            },
-                            {
-                              text : 'You can select one of the following items to get more detailed analysis.'
-                            }
-                          ],
-                        sender: 'bot'
-                      });
+      messageUnits: [
+        { 
+          type: 'catalog', 
+          data: catalog.value, 
+          text: 'I see that you have selected a GOOD FIRST ISSUE <a href="https://github.com/pytorch/pytorch/issues/130861" target="_blank">#130861</a> in Pytorch, and in this step I can perform a comprehensive issue analysis for you, including the following:', 
+        },
+        {
+          text : 'You can select one of the following items to get more detailed analysis.'
+        }
+      ],
+      sender: 'bot'
+    });
   }, 500);
 };
 
 const initialized = ref(getFromLocalStorage('issueAnalysisInitialized') === 'true');
-// 初始化issue分析
+
+// Initialize issue analysis
 onMounted(() => {
   if (!initialized.value) {
     getFirstAnalysis();
@@ -73,7 +74,7 @@ onMounted(() => {
   }
 });
 
-// 发送消息
+// Send message
 const sendMessage = () => {
   if (userInput.value.trim()) {
     messages.value.push({ text: userInput.value, sender: 'user' });
@@ -82,6 +83,7 @@ const sendMessage = () => {
   }
 };
 
+// Get issue reappear information
 const getIssueReappear = () => {
   setTimeout(() => {
     issueReappearVersion.value = [
@@ -92,52 +94,75 @@ const getIssueReappear = () => {
       "CMake version: version 3.29.2",
       "Libc version: glibc-2.35",
     ];
-    issueReappearCode.value = "import torch.fx\nclass M1(torch.nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.linear = torch.nn.Linear(1, 1)\n    def forward(self, x):\n        return x + self.linear(x)\nclass M2(torch.nn.Module):\n    def __init__(self):\n        super().__init__()\n        self.m1 = M1()\n    def forward(self, x):\n        return x + self.m1(x)\nm = M2()\ntracer = torch.fx.Tracer()\ntracer.record_stack_traces=True\ngraph = tracer.trace(m)\nsym=torch.fx.GraphModule(m,graph)\nprint(sym.print_readable())\nassert 'code: return x + self.linear(x)' in sym.print_readable()\nassert 'code: return x + self.m1(x)' in sym.print_readable()";
+    issueReappearCode.value = `import torch.fx
+class M1(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.linear = torch.nn.Linear(1, 1)
+    def forward(self, x):
+        return x + self.linear(x)
+class M2(torch.nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.m1 = M1()
+    def forward(self, x):
+        return x + self.m1(x)
+m = M2()
+tracer = torch.fx.Tracer()
+tracer.record_stack_traces=True
+graph = tracer.trace(m)
+sym=torch.fx.GraphModule(m,graph)
+print(sym.print_readable())
+assert 'code: return x + self.linear(x)' in sym.print_readable()
+assert 'code: return x + self.m1(x)' in sym.print_readable()`;
     messages.value.push({
-                        messageUnits:
-                          [
-                            {
-                              text: 'Okay, let\'s reproduce the bug.',
-                            },
-                            { 
-                              type: 'issueReappearVersion', 
-                              data: issueReappearVersion.value, 
-                              text: 'In order to reproduce the bug, we first had to set our environment to the version mentioned in the issue report:', 
-                            },
-                            { 
-                              type: 'showcode', 
-                              data: issueReappearCode.value, 
-                              text: 'Next, as we can see from the code below, torch.fx.Tracer has a record_stack_traces member. It does not give the correct stack trace, starting with torch 2.4 RC. torch.export.unflatten looses stack trace for collapsed modules.', 
-                            }
-                          ],
-                        sender: 'bot'
-                        });
+      messageUnits: [
+        {
+          text: 'Okay, let\'s reproduce the bug.',
+        },
+        { 
+          type: 'issueReappearVersion', 
+          data: issueReappearVersion.value, 
+          text: 'In order to reproduce the bug, we first had to set our environment to the version mentioned in the issue report:', 
+        },
+        { 
+          type: 'showcode', 
+          data: issueReappearCode.value, 
+          text: 'Next, as we can see from the code below, torch.fx.Tracer has a record_stack_traces member. It does not give the correct stack trace, starting with torch 2.4 RC. torch.export.unflatten looses stack trace for collapsed modules.', 
+        }
+      ],
+      sender: 'bot'
+    });
   }, 500);
 };
 
+// Get related issue recommendation
 const getRelatedIssueRecommendation = () => {
   setTimeout(() => {
-    relatedIssuRecommendationCode.value = "time_start = time.time()\nfor i in range(1000):\n    self.check_graph(MyModule(), inputs)\nwarnings.warn(f\"time_taken: {time.time() - time_start}\")";
+    relatedIssuRecommendationCode.value = `time_start = time.time()
+for i in range(1000):
+    self.check_graph(MyModule(), inputs)
+warnings.warn(f"time_taken: {time.time() - time_start}")`;
     messages.value.push({
-                        messageUnits:
-                          [
-                            {
-                              text: 'After my analysis of the code base and past issues, this issue seems to be related to PR <a href="https://github.com/pytorch/pytorch/issues/130861" target="_blank">#121449</a>, where pytorch stopped using the find_user_frame (or an equivalent function) to filter non user stack traces.',
-                            },
-                            { 
-                              type: 'showcode', 
-                              data: relatedIssuRecommendationCode.value, 
-                              text: 'This PR replace traceback.extract_stack with CapturedTraceback.extract using below code:', 
-                            },
-                            { 
-                              text: 'and forcing FakeTensorConfig.debug to True, record_stack_traces to True, logging level to debug, it shows that the the changed code is consistently ard 20 secs faster (~90s vs originally ~110s). But it also result in issue #130861. Looking through this PR will help to resolve the issue!', 
-                            }
-                          ],
-                        sender: 'bot'
-                        });
+      messageUnits: [
+        {
+          text: 'After my analysis of the code base and past issues, this issue seems to be related to PR <a href="https://github.com/pytorch/pytorch/issues/130861" target="_blank">#121449</a>, where pytorch stopped using the find_user_frame (or an equivalent function) to filter non user stack traces.',
+        },
+        { 
+          type: 'showcode', 
+          data: relatedIssuRecommendationCode.value, 
+          text: 'This PR replace traceback.extract_stack with CapturedTraceback.extract using below code:', 
+        },
+        { 
+          text: 'and forcing FakeTensorConfig.debug to True, record_stack_traces to True, logging level to debug, it shows that the the changed code is consistently ard 20 secs faster (~90s vs originally ~110s). But it also result in issue #130861. Looking through this PR will help to resolve the issue!', 
+        }
+      ],
+      sender: 'bot'
+    });
   }, 500);
 };
 
+// Get solution steps analysis
 const getSolutionStepsAnalysis = () => {
   setTimeout(() => {
     solutionSteps.value = [
@@ -171,35 +196,33 @@ const getSolutionStepsAnalysis = () => {
       },
     ];
     messages.value.push({
-                          messageUnits:
-                          [
-                            {  
-                              type: 'solutionSteps', 
-                              data: solutionSteps.value, 
-                              text: 'I think you can try to resolve the issue by following these steps:', 
-                            },
-                            {
-                              text: "This solution should restore the functionality of record_stack_traces in PyTorch 2.4.0 and later versions. It filters out internal PyTorch frames from the stack trace, providing only the user-relevant information."
-                            }
-                          ],
-                          sender: 'bot'
-                        });
+      messageUnits: [
+        {  
+          type: 'solutionSteps', 
+          data: solutionSteps.value, 
+          text: 'I think you can try to resolve the issue by following these steps:', 
+        },
+        {
+          text: "This solution should restore the functionality of record_stack_traces in PyTorch 2.4.0 and later versions. It filters out internal PyTorch frames from the stack trace, providing only the user-relevant information."
+        }
+      ],
+      sender: 'bot'
+    });
   }, 500);
 };
 
-// 处理用户输入
+// Handle user input
 const handleUserInput = (input) => {
   if (input.toLowerCase().includes('reappear') || input.toLowerCase().includes('1')) {
     getIssueReappear();
   } else if (input.toLowerCase().includes('similar') || input.toLowerCase().includes('2')) {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'Sure! Let me analyze base/similar function of this issue in Pytorch', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [{ 
+          text: 'Sure! Let me analyze base/similar function of this issue in Pytorch', 
+        }],
+        sender: 'bot'
+      });
     }, 500);
   } else if (input.toLowerCase().includes('related') || input.toLowerCase().includes('3')) {
     getRelatedIssueRecommendation();
@@ -208,12 +231,11 @@ const handleUserInput = (input) => {
   } else {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'System error: please try again later.', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [{ 
+          text: 'System error: please try again later.', 
+        }],
+        sender: 'bot'
+      });
     }, 500);
   }
 };
@@ -388,6 +410,6 @@ const handleUserInput = (input) => {
 }
 
 .message-margin {
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  margin: 10px 0;
 }
 </style>
