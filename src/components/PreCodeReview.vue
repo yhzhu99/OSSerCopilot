@@ -89,7 +89,7 @@ const sendMessage = () => {
 
 const getPreReview = () => {
   setTimeout(() => {
-    PRDescriptionAdvice.value =  `This PR addresses the issue described in #130861 by fixing the stack trace recording in 'torch.fx.Tracer'.
+    PRDescriptionAdvice.value =  `This PR addresses the issue described in #130861 by fixing the stack trace recording in <span class=\'code-style\'>'torch.fx.Tracer'</span>.
 
 **Changes Made:**
 - Fixed the stack trace recording logic.
@@ -107,33 +107,33 @@ Please review and let me know if any additional changes are needed.`;
                               text: 'Based on your submitted code and PR information, here are some of my suggestions:',
                             },
                             { 
-                              text: '1.Code Standards: Your code conforms to the standards of Pytorch.', 
+                              text: '1.<strong>Code Standards</strong>: Your code conforms to the standards of Pytorch.', 
                               pass: 'True'
                             },
                             { 
-                              text: '2.Code Style: Your code style matches the project code.', 
+                              text: '2.<strong>Code Style</strong>: Your code style matches the project code.', 
                               pass: 'True'
                             },
                             { 
-                              text: '3.Code Modification Advice: This is a very simplified function. It is a patch one contributor did in his tracer that inherits form torch.fx tracer, and makes it work in both 2.3 and 2.4 that is the 2_4. you should probably call the original find_user_frame in the new code.', 
+                              text: '3.<strong>Code Modification Advice</strong>: This is a very simplified function. It is a patch one contributor did in his tracer that inherits form <span class=\'code-style\'>torch.fx</span> tracer, and makes it work in both 2.3 and 2.4 that is the 2_4. you should probably call the original <span class=\'code-style\'>find_user_frame</span> in the new code.', 
                               pass: 'False'
                             },
                             { 
-                              text: '4.PR Title Modification Advice: The current title torch.fx.Tracer.record_stack_traces fix #131741 can be made more descriptive. For example: Fix stack trace recording issue in torch.fx.Tracer (#131741).', 
+                              text: '4.<strong>PR Title Modification Advice</strong>: The current title torch.fx.Tracer.record_stack_traces fix #131741 can be made more descriptive. For example: Fix stack trace recording issue in torch.fx.Tracer (#131741).', 
                               pass: 'Warning'
                             },
                             { 
-                              text: '5.PR Desciption Modification Advice: The current description \'Please let me know what changes would be needed, it\'s a start.\' can be more detailed. For example:', 
+                              text: '5.<strong>PR Desciption Modification Advice</strong>: The current description \'Please let me know what changes would be needed, it\'s a start.\' can be more detailed. For example:', 
                               data: PRDescriptionAdvice.value,
                               type: 'advice',
                               pass: 'Warning'
                             },
                             { 
-                              text: '6.Commit Desciption Modification Advice: The current commit message Fixes the tracer issue is too brief. It can be more descriptive.', 
+                              text: '6.<strong>Commit Desciption Modification Advice</strong>: The current commit message Fixes the tracer issue is too brief. It can be more descriptive.', 
                               pass: 'Warning'
                             },
                             { 
-                              text: '7.Documentation: Update any relevant documentation if your changes affect the project\'s documentation.', 
+                              text: '7.<strong>Documentation</strong>: Update any relevant documentation if your changes affect the project\'s documentation.', 
                               pass: 'Warning'
                             },
                           ],
@@ -374,5 +374,11 @@ const handleUserInput = (input) => {
 
 .message-margin {
   margin: 10px 0;
+}
+
+:deep(.code-style) {
+  background-color: #bbb8b86d;
+  color: #333;
+  font-family: monospace;
 }
 </style>
