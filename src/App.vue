@@ -1,53 +1,3 @@
-<template>
-  <div class="main-page">
-    <header class="header" v-if="currentView !== 'introduction'">
-      <el-steps
-        class="steps"
-        style="max-width: 100%"
-        :active="currentTaskIndex"
-        finish-status="success"
-        align-center
-      >
-        <el-step
-          v-for="(item, index) in navItems"
-          :key="index"
-          :title="getStepStatus(index)"
-          @click="navigateToStep(index)"
-        />
-      </el-steps>
-      <h1 class="current-task-title">{{ currentTask }}</h1>
-    </header>
-    <main class="content">
-      <div v-if="currentView === 'introduction'">
-        <h1>Welcome to the OSSNewcomerCopilot 🎁</h1>
-        <p style="font-size: 16px;">I am an <strong>AI bot</strong> 🤖️ that guides <strong>OSS newcomers</strong> through their first few contributions to help them get started and grow better. </p>
-        <p style="font-size: 16px;">I can help in all steps of the open source contribution (shown below):</p>
-        <el-timeline style="max-width: 600px; margin: 20px auto;">
-          <el-timeline-item
-            v-for="(item, index) in navItems"
-            :key="item.view"
-            :timestamp="index + 1"
-            :color="item.color"
-          >
-            <strong>{{ item.fullText }}</strong>
-          </el-timeline-item>
-        </el-timeline>
-        <p style="font-size: 16px;">If you're ready, click the "Start My Contribution" button below and I'll help you through the entire contribution process.</p>
-        <el-button @click="startContribution">Start My Contribution</el-button>
-      </div>
-      <div v-else>
-        <component 
-          :is="currentComponent" 
-          :on-next-step="nextStep"
-          :key="currentView"
-          v-model:form-data="formData[currentView]"
-        />
-        <el-button @click="nextStep">Completed, Next Step</el-button>
-      </div>
-    </main>
-  </div>
-</template>
-
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue';
 import { ElButton, ElMessageBox, ElTimeline, ElTimelineItem, ElSteps, ElStep, colProps } from 'element-plus';
@@ -130,7 +80,6 @@ const startContribution = () => {
   stepStatus.value = navItems.map(() => 'pending');
 };
 
-
 // Compute current component
 const currentComponent = computed(() => {
   switch (currentView.value) {
@@ -165,16 +114,67 @@ onMounted(() => {
 });
 </script>
 
+
+<template>
+  <div class="main-page">
+    <header class="header" v-if="currentView !== 'introduction'">
+      <el-steps
+        class="steps"
+        style="max-width: 100%"
+        :active="currentTaskIndex"
+        finish-status="success"
+        align-center
+      >
+        <el-step
+          v-for="(item, index) in navItems"
+          :key="index"
+          :title="getStepStatus(index)"
+          @click="navigateToStep(index)"
+        />
+      </el-steps>
+      <h1 class="current-task-title">{{ currentTask }}</h1>
+    </header>
+    <main class="content">
+      <div class="content-overlay"></div>
+      <div class="content-inner">
+        <div v-if="currentView === 'introduction'">
+          <h1>Welcome to the OSSNewcomerCopilot 🎁</h1>
+          <p style="font-size: 16px;">I am an <strong>AI bot</strong> 🤖️ that guides <strong>OSS newcomers</strong> through their first few contributions to help them get started and grow better. </p>
+          <p style="font-size: 16px;">I can help in all steps of the open source contribution (shown below):</p>
+          <el-timeline style="max-width: 600px; margin: 20px auto;">
+            <el-timeline-item
+              v-for="(item, index) in navItems"
+              :key="item.view"
+              :timestamp="index + 1"
+              :color="item.color"
+            >
+              <strong>{{ item.fullText }}</strong>
+            </el-timeline-item>
+          </el-timeline>
+          <p style="font-size: 16px;">If you're ready, click the "Start My Contribution" button below and I'll help you through the entire contribution process.</p>
+          <el-button @click="startContribution">Start My Contribution</el-button>
+        </div>
+        <div v-else>
+          <component 
+            :is="currentComponent" 
+            :on-next-step="nextStep"
+            :key="currentView"
+            v-model:form-data="formData[currentView]"
+          />
+          <el-button @click="nextStep">Completed, Next Step</el-button>
+        </div>
+      </div>
+    </main>
+  </div>
+</template>
+
 <style scoped>
 .main-page {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  font-family: Arial, sans-serif; /* 确保全局应用 */
-  color: #333333; /* 全局字体颜色 */
-  background-image: url('/icons/botbg.png'); /* 添加背景图片 */
-  background-size: cover; /* 确保背景图片覆盖整个元素 */
-  background-position: center; /* 图片居中显示 */
+  font-family: Arial, sans-serif;
+  color: #333333;
 }
 
 .header {
@@ -204,9 +204,32 @@ onMounted(() => {
 .content {
   flex-grow: 1;
   padding: 10px;
-  background-color: #ffffff;
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.content-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('/botbg.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.3;
+  z-index: 1;
+}
+
+.content-inner {
+  position: relative;
+  z-index: 2;
+  background-color: rgba(255, 255, 255, 0.7);
+  padding: 20px;
+  border-radius: 10px;
 }
 
 .message-display {

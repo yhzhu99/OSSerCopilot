@@ -4,13 +4,14 @@ import { ElCard, ElInput, ElButton, ElAvatar, ElCollapse, ElCollapseItem, ElTag,
 import 'element-plus/dist/index.css';
 import { saveToLocalStorage, getFromLocalStorage } from '../utils/storage';
 
-// 聊天消息列表
+// Chat message list
 const messages = ref(getFromLocalStorage('contributionGuidelineMessages') || []);
 const userInput = ref('');
 const catalog = ref(getFromLocalStorage('contributionGuidelineCatalog') || []);
 const summaryStep = ref(getFromLocalStorage('contributionGuidelineSummaryStep') || []);
 const prerequisites = ref(getFromLocalStorage('contributionGuidelinePrerequisites') || []);
 
+// Watch for changes and save to local storage
 watch(messages, (newValue) => {
   saveToLocalStorage('contributionGuidelineMessages', newValue);
 }, { deep: true });
@@ -27,8 +28,7 @@ watch(prerequisites, (newValue) => {
   saveToLocalStorage('contributionGuidelinePrerequisites', newValue);
 }, { deep: true });
 
-
-// 获取贡献指南分析
+// Get initial contribution guideline analysis
 const getFirstAnalysis = () => {
   setTimeout(() => {
     summaryStep.value = [
@@ -44,33 +44,37 @@ const getFirstAnalysis = () => {
     ];
     catalog.value = ["Setup the developer environment","Pull Request workflow","Writing documentation","C++ development tips","CUDA development tips","Community communicating tips"];
     messages.value.push({
-                        messageUnits:
-                          [{ 
-                            text: "You want to contribute to Pytorch? That's great! Below I will provide you with a contribution guide based on the project's 'CONTRIBUTING.md' file:"
-                            },
-                            { 
-                            type: "summary" , 
-                            data: summaryStep.value, 
-                            text: 'This is the Contributing Guide for the project newcomers <a href="https://github.com/pytorch/pytorch/wiki/The-Ultimate-Guide-to-PyTorch-Contributions" target="_blank">Contributing Guide</a>. Like many open source projects, PyTorch uses a workflow based on pull requests. You will create a copy of the repository in your Git branch, make your changes and test it, push those changes to your fork (origin), and create a pull request (PR) against the official repo (upstream). Below are the exact steps to follow:', 
-                            },
-                            { 
-                            type: 'catalog', 
-                            data: catalog.value, 
-                            text: 'You can keep asking me more detailed questions about contributing documentation, for example:', 
-                            },
-                          ],
-                        sender: 'bot'
-                      });
+      messageUnits: [
+        { 
+          text: "You want to contribute to Pytorch? That's great! Below I will provide you with a contribution guide based on the project's 'CONTRIBUTING.md' file:"
+        },
+        { 
+          type: "summary" , 
+          data: summaryStep.value, 
+          text: 'This is the Contributing Guide for the project newcomers <a href="https://github.com/pytorch/pytorch/wiki/The-Ultimate-Guide-to-PyTorch-Contributions" target="_blank">Contributing Guide</a>. Like many open source projects, PyTorch uses a workflow based on pull requests. You will create a copy of the repository in your Git branch, make your changes and test it, push those changes to your fork (origin), and create a pull request (PR) against the official repo (upstream). Below are the exact steps to follow:', 
+        },
+        { 
+          type: 'catalog', 
+          data: catalog.value, 
+          text: 'You can keep asking me more detailed questions about contributing documentation, for example:', 
+        },
+      ],
+      sender: 'bot'
+    });
   }, 500);
 };
 
-
-// 初始化贡献指南分析
+const initialized = ref(getFromLocalStorage('contributionGuidelineInitialized') === 'true');
+// Initialize contribution guideline analysis
 onMounted(() => {
-  getFirstAnalysis();
+  if (!initialized.value) {
+    getFirstAnalysis();
+    initialized.value = true;
+    saveToLocalStorage('contributionGuidelineInitialized', 'true');
+  }
 });
 
-// 发送消息
+// Send message
 const sendMessage = () => {
   if (userInput.value.trim()) {
     messages.value.push({ text: userInput.value, sender: 'user' });
@@ -79,6 +83,7 @@ const sendMessage = () => {
   }
 };
 
+// Get environment setup information
 const getEnvironmentSetup = () => {
   setTimeout(() => {
     prerequisites.value = [
@@ -90,17 +95,17 @@ const getEnvironmentSetup = () => {
       "PyTorch Workflow Git cheatsheet"
     ];
     messages.value.push({
-                        messageUnits:
-                          [{ 
-                            type: 'environment', 
-                            data: prerequisites.value, 
-                            text: 'You can keep asking me more detailed questions about setup the developer environment, for example:', 
-                          }],
-                        sender: 'bot'
-                        });
+      messageUnits: [{ 
+        type: 'environment', 
+        data: prerequisites.value, 
+        text: 'You can keep asking me more detailed questions about setup the developer environment, for example:', 
+      }],
+      sender: 'bot'
+    });
   }, 500);
 };
 
+// Get prerequisites information
 const getPrerequisites = () => {
   setTimeout(() => {
     prerequisites.value = [
@@ -128,82 +133,75 @@ const getPrerequisites = () => {
       },
     ];
     messages.value.push({
-                          messageUnits:
-                          [{  
-                            type: 'prerequisites', 
-                            data: prerequisites.value, 
-                            text: 'Prerequisites are below', 
-                          }],
-                          sender: 'bot'
-                        });
+      messageUnits: [{  
+        type: 'prerequisites', 
+        data: prerequisites.value, 
+        text: 'Prerequisites are below', 
+      }],
+      sender: 'bot'
+    });
   }, 500);
 };
 
-// 处理用户输入
+// Handle user input
 const handleUserInput = (input) => {
   if (input.toLowerCase().includes('environment') || input.toLowerCase().includes('setup') || input.toLowerCase().includes('1')) {
     getEnvironmentSetup();
   } else if (input.toLowerCase().includes('workflow') || input.toLowerCase().includes('2')) {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'Sure! Let me introduce you to the general workflow of contributing to Pytorch', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [{ 
+          text: 'Sure! Let me introduce you to the general workflow of contributing to Pytorch', 
+        }],
+        sender: 'bot'
+      });
     }, 500);
   } else if (input.toLowerCase().includes('documentation') || input.toLowerCase().includes('3')) {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'Sure! Let me introduce you to how to writing documentation for Pytorch', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [{ 
+          text: 'Sure! Let me introduce you to how to writing documentation for Pytorch', 
+        }],
+        sender: 'bot'
+      });
     }, 500);
   } else if (input.toLowerCase().includes('c++') || input.toLowerCase().includes('4')) {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'Sure! I will give you some tips for developing in C++.', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [{ 
+          text: 'Sure! I will give you some tips for developing in C++.', 
+        }],
+        sender: 'bot'
+      });
     }, 500);
   } else if (input.toLowerCase().includes('cuda') || input.toLowerCase().includes('5')) {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'Sure! I will give you some tips for developing in CUDA.', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [{ 
+          text: 'Sure! I will give you some tips for developing in CUDA.', 
+        }],
+        sender: 'bot'
+      });
     }, 500);
   } else if (input.toLowerCase().includes('install prerequisites')) {
     getPrerequisites();
   } else if (input.toLowerCase().includes('communicat') || input.toLowerCase().includes('6')) {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'Sure! I will give you some tips of how to communicate with other contributors in pytorch', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [{ 
+          text: 'Sure! I will give you some tips of how to communicate with other contributors in pytorch', 
+        }],
+        sender: 'bot'
+      });
     }, 500);
   } else {
     setTimeout(() => {
       messages.value.push({
-                          messageUnits:
-                          [{ 
-                            text: 'System error: please try again later.', 
-                          }],
-                          sender: 'bot'
-                        });
+        messageUnits: [{ 
+          text: 'System error: please try again later.', 
+        }],
+        sender: 'bot'
+      });
     }, 500);
   }
 };
@@ -379,7 +377,7 @@ const handleUserInput = (input) => {
 }
 
 .message-margin {
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  margin: 10px 0;
 }
 
 </style>

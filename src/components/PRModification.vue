@@ -72,10 +72,15 @@ const getModificationAdviceTips = () => {
 };
 
 
+const initialized = ref(getFromLocalStorage('prModificationInitialized') === 'true');
 // 初始化
 onMounted(() => {
-  form.PRURL = userHistory.PRURL;
-  getModificationAdviceTips();
+  if (!initialized.value) {
+    form.PRURL = userHistory.PRURL;
+    getModificationAdviceTips();
+    initialized.value = true;
+    saveToLocalStorage('prModificationInitialized', 'true');
+  }
 });
 
 // 发送消息
@@ -350,11 +355,11 @@ const handleUserInput = (input) => {
 
 .icon-text-container {
   display: flex;
-  align-items: center; /* 垂直居中对齐 */
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  align-items: center;
+  margin: 10px 0;
 }
 
 .message-margin {
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  margin: 10px 0;
 }
 </style>

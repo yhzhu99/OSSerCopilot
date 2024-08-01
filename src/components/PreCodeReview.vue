@@ -66,12 +66,16 @@ const getReviewTips = () => {
   }, 500);
 };
 
-
+const initialized = ref(getFromLocalStorage('preCodeReviewInitialized') === 'true');
 // 初始化
 onMounted(() => {
-  form.PRDescription = userHistory.PRDescription;
-  form.codeFileList = userHistory.codeFileList;
-  getReviewTips();
+  if (!initialized.value) {
+    form.PRDescription = userHistory.PRDescription;
+    form.codeFileList = userHistory.codeFileList;
+    getReviewTips();
+    initialized.value = true;
+    saveToLocalStorage('preCodeReviewInitialized', 'true');
+  }
 });
 
 // 发送消息
@@ -364,11 +368,11 @@ const handleUserInput = (input) => {
 }
 .icon-text-container {
   display: flex;
-  align-items: center; /* 垂直居中对齐 */
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  align-items: center;
+  margin: 10px 0;
 }
 
 .message-margin {
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  margin: 10px 0;
 }
 </style>

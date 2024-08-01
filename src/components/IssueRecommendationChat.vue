@@ -273,14 +273,19 @@ const chooseIssue = (link) => {
       window.open(link, '_blank');
 };
 
+const initialized = ref(getFromLocalStorage('issueRecommendationInitialized') === 'true');
 // 初始化推荐项目
 onMounted(() => {
-  form.programmingLanguages = userHistory.programmingLanguages;
-  form.difficultyLevel = userHistory.difficultyLevel;
-  form.availableTime = userHistory.availableTime;
-  form.motivation = userHistory.motivation;
+  if (!initialized.value) {
+    form.programmingLanguages = userHistory.programmingLanguages;
+    form.difficultyLevel = userHistory.difficultyLevel;
+    form.availableTime = userHistory.availableTime;
+    form.motivation = userHistory.motivation;
 
-  getFirstRecommendedIssues();
+    getFirstRecommendedIssues();
+    initialized.value = true;
+    saveToLocalStorage('issueRecommendationInitialized', 'true');
+  }
 });
 
 // 发送消息
@@ -519,12 +524,12 @@ const handleUserInput = (input) => {
 
 .project-container {
   display: flex;
-  align-items: center; /* 垂直居中 */
-  justify-content: space-between; /* 水平间距 */
+  align-items: center;
+  justify-content: space-between;
 }
 
 .message-margin {
-  margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+  margin: 10px 0;
 }
 
 :deep(.code-style) {
