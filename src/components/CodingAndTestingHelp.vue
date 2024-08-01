@@ -43,10 +43,8 @@ watch(testCodeExplanation, (newValue) => {
   saveToLocalStorage('testCodeExplanation', newValue);
 }, { deep: true });
 
-// Get the first code snippet
-const getFirstCode = () => {
+const getFirstTips = () => {
   setTimeout(() => {
-    firstExampleCode.value = "import torch.fx\nfrom torch.fx.proxy import CapturedTraceback\n\nclass Tracer(torch.fx.Tracer):\n    def create_proxy(self, kind, target, args, kwargs, name, type_expr=None, proxy_factory_fn=None):\n        proxy = super().create_proxy(kind, target, args, kwargs, name, type_expr, proxy_factory_fn)\n        if self.record_stack_traces and not proxy.node.stack_trace:\n            proxy.node.stack_trace = self._find_user_frame2_4(''.join(CapturedTraceback.extract().format()))\n        return proxy\n\n    def _find_user_frame2_4(self, stack_trace):\n        stack_trace = stack_trace.split('\n')\n        if 'torch/fx/proxy.py' in stack_trace[-3]:\n            stack_trace = stack_trace[:-1]\n            while len(stack_trace) > 2 and '/fx/' in stack_trace[-2]:\n                stack_trace = stack_trace[:-2]\n        return '\\n'.join(stack_trace)";
     catalog.value = [
       "Code Comprehension",
       "Code Translation",
@@ -56,17 +54,33 @@ const getFirstCode = () => {
     messages.value.push({
       messageUnits: [
         { 
-          type: 'showcode', 
-          data: firstExampleCode.value, 
-          text: 'According to the analysis we have done before, the following code may help you to solve this issue, you can refer to it and make any modification, note that it may not be necessarily correct', 
+          text: 'After our analysis in the previous step, you can now start writing code and testing it.', 
         },
         { 
           type: 'catalog', 
           data: catalog.value, 
-          text: 'You can always ask me for help during code writing and test writing, for example:', 
+          text: 'In this step, you can always ask me for help during code writing and test writing, for example:', 
         },
         {
-          text : 'But when it comes to problems, it\'s better for you to prioritise independent thinking.'
+          text : 'However, when it comes to problems, it\'s better for you to prioritise independent thinking.'
+        }
+      ],
+      sender: 'bot'
+    });
+  }, 500);
+};
+
+
+// Get the first code snippet
+const getFirstCode = () => {
+  setTimeout(() => {
+    firstExampleCode.value = "import torch.fx\nfrom torch.fx.proxy import CapturedTraceback\n\nclass Tracer(torch.fx.Tracer):\n    def create_proxy(self, kind, target, args, kwargs, name, type_expr=None, proxy_factory_fn=None):\n        \"\"\"\n        try to complete the code yourself\n        \"\"\"\n        return proxy\n\n    def _find_user_frame2_4(self, stack_trace):\n        \"\"\"\n        try to complete the code yourself\n        \"\"\"\n        return '\\n'.join(stack_trace)";
+    messages.value.push({
+      messageUnits: [
+        { 
+          type: 'showcode', 
+          data: firstExampleCode.value, 
+          text: 'According to the analysis we have done before, the following code framework may help you to solve this issue, you can refer to it and make any modification, note that it may not be necessarily correct', 
         }
       ],
       sender: 'bot'
@@ -78,7 +92,7 @@ const initialized = ref(getFromLocalStorage('codingTestingInitialized') === 'tru
 // Initialize
 onMounted(() => {
   if (!initialized.value) {
-    getFirstCode();
+    getFirstTips();
     initialized.value = true;
     saveToLocalStorage('codingTestingInitialized', 'true');
   }
@@ -97,11 +111,11 @@ const sendMessage = () => {
 const getNL2Code = () => {
   setTimeout(() => {
     NL2CodeExplanation.value = [
-      "Import necessary modules - torch.fx and a custom Tracer class.",
-      "Define two PyTorch modules: M1 is a simple module with a linear layer plus input. M2 contains an instance of M1 and adds its output to the input.",
+      "Import necessary modules - <span class=\'code-style\'>torch.fx</span> and a custom <span class=\'code-style\'>Tracer</span> class.",
+      "Define two PyTorch modules: <span class=\'code-style\'>M1</span> is a simple module with a linear layer plus input. <span class=\'code-style\'>M2</span> contains an instance of <span class=\'code-style\'>M1</span> and adds its output to the input.",
       "Create a model instance.",
       "Use the custom Tracer class for tracing: This uses the custom Tracer class to trace the model's computation graph and enables stack trace recording.",
-      "Create a symbolic graph module: This converts the traced graph into a GraphModule.",
+      "Create a symbolic graph module: This converts the traced graph into a <span class=\'code-style\'>GraphModule</span>.",
       "Print and assert: This prints a readable representation of the symbolic graph and asserts that specific code snippets are present in the output."
     ];
     NL2Code.value = `import torch.fx
@@ -109,17 +123,23 @@ from your_module import Tracer  # Import the new Tracer class
 
 class M1(torch.nn.Module):
     def __init__(self):
-        super().__init__()
-        self.linear = torch.nn.Linear(1, 1)
+        """
+        try to complete the code yourself
+        """
     def forward(self, x):
-        return x + self.linear(x)
+        """
+        try to complete the code yourself
+        """
 
 class M2(torch.nn.Module):
     def __init__(self):
-        super().__init__()
-        self.m1 = M1()
+        """
+        try to complete the code yourself
+        """
     def forward(self, x):
-        return x + self.m1(x)
+        """
+        try to complete the code yourself
+        """
 
 m = M2()
 tracer = Tracer()  # Use the new Tracer class
@@ -140,7 +160,7 @@ assert 'code: return x + self.m1(x)' in sym.print_readable()
         { 
           type: 'NL2CodeExplanation', 
           data: NL2CodeExplanation.value, 
-          text: 'In this code, we replace the original torch.fx.Tracer() with an instance of this new Tracer class:', 
+          text: 'In this code, we replace the original <span class=\'code-style\'>torch.fx.Tracer()</span> with an instance of this new <span class=\'code-style\'>Tracer</span> class:', 
         },
       ],
       sender: 'bot'
@@ -152,9 +172,9 @@ assert 'code: return x + self.m1(x)' in sym.print_readable()
 const getTestCode = () => {
   setTimeout(() => {
     testCodeExplanation.value = [
-      "test_create_proxy: This test verifies that the create_proxy method correctly creates a Proxy object with a Node that has a stack_trace attribute when record_stack_traces is enabled.",
-      "test_find_user_frame2_4: This test checks the _find_user_frame2_4 method to ensure it correctly filters out PyTorch internal frames and preserves user frames.",
-      "test_record_stack_traces_disabled: This test ensures that when record_stack_traces is set to False, the create_proxy method doesn't add a stack_trace attribute to the node.",
+      "<span class=\'code-style\'>test_create_proxy</span>: This test verifies that the <span class=\'code-style\'>create_proxy</span> method correctly creates a Proxy object with a Node that has a <span class=\'code-style\'>stack_trace</span> attribute when <span class=\'code-style\'>record_stack_traces<span> is enabled.",
+      "<span class=\'code-style\'>test_find_user_frame2_4</span>: This test checks the <span class=\'code-style\'>_find_user_frame2_4</span> method to ensure it correctly filters out PyTorch internal frames and preserves user frames.",
+      "<span class=\'code-style\'>test_record_stack_traces_disabled</span>: This test ensures that when <span class=\'code-style\'>record_stack_traces</span> is set to False, the <span class=\'code-style\'>create_proxy</span> method doesn't add a <span class=\'code-style\'>stack_trace</span> attribute to the node.",
     ];
     testCode.value = `import unittest
 import torch
@@ -164,52 +184,31 @@ from your_module import Tracer  # Assuming the Tracer class is in a file named '
 
 class TestCustomTracer(unittest.TestCase):
     def setUp(self):
-        self.tracer = Tracer()
-        self.tracer.record_stack_traces = True
+        """
+        try to complete the code yourself
+        """
 
     def test_create_proxy(self):
         # Create a dummy module for testing
         class DummyModule(torch.nn.Module):
             def forward(self, x):
-                return x + 1
+            """
+            try to complete the code yourself
+            """
 
-        m = DummyModule()
-
-        # Test create_proxy method
-        proxy = self.tracer.create_proxy('call_function', torch.add, (torch.tensor([1.0]), torch.tensor([2.0])), {}, 'add')
-        
-        self.assertIsInstance(proxy, Proxy)
-        self.assertIsInstance(proxy.node, Node)
-        self.assertTrue(hasattr(proxy.node, 'stack_trace'))
-        self.assertIsNotNone(proxy.node.stack_trace)
+        """
+        try to complete the code yourself
+        """
 
     def test_find_user_frame2_4(self):
-        # Create a mock stack trace
-        mock_stack_trace = '''
-File "test_file.py", line 10, in test_function
-    result = some_operation()
-File "/path/to/torch/fx/proxy.py", line 100, in proxy_function
-    return proxy_operation()
-File "/path/to/torch/fx/other_file.py", line 50, in other_function
-    return final_operation()
-'''
-        result = self.tracer._find_user_frame2_4(mock_stack_trace)
-        
-        # Check if torch/fx/proxy.py frame is removed
-        self.assertNotIn('torch/fx/proxy.py', result)
-        
-        # Check if other torch/fx frames are removed
-        self.assertNotIn('torch/fx/other_file.py', result)
-        
-        # Check if user frame is preserved
-        self.assertIn('test_file.py', result)
+        """
+        try to complete the code yourself
+        """
 
     def test_record_stack_traces_disabled(self):
-        self.tracer.record_stack_traces = False
-        
-        proxy = self.tracer.create_proxy('call_function', torch.add, (torch.tensor([1.0]), torch.tensor([2.0])), {}, 'add')
-        
-        self.assertFalse(hasattr(proxy.node, 'stack_trace'))
+        """
+        try to complete the code yourself
+        """
 
 if __name__ == '__main__':
     unittest.main()`;
@@ -218,7 +217,7 @@ if __name__ == '__main__':
         { 
           type: 'showcode', 
           data: testCode.value, 
-          text: 'Certainly! Here\'s a unit test case for the custom Tracer class you\'ve provided. This test case will verify the functionality of the create_proxy method and the _find_user_frame2_4 method.', 
+          text: 'Certainly! Here\'s a unit test case for the custom <span class=\'code-style\'>Tracer</span> class you\'ve provided. This test case will verify the functionality of the <span class=\'code-style\'>create_proxy</span> method and the <span class=\'code-style\'>_find_user_frame2_4</span> method.', 
         },
         { 
           type: 'testCodeExplanation', 
@@ -248,6 +247,8 @@ const handleUserInput = (input) => {
         sender: 'bot'
       });
     }, 500);
+  }else if (input.toLowerCase().includes('tips')) {
+    getFirstCode();
   } else {
     setTimeout(() => {
       messages.value.push({
@@ -294,16 +295,12 @@ const handleUserInput = (input) => {
             </div>
             <div v-if="messageUnit.type === 'NL2CodeExplanation'" class="message-margin">
               <ul>
-                <li v-for="(step, index) in messageUnit.data" :key="index">
-                  {{ step }}
-                </li>
+                <li v-for="(step, index) in messageUnit.data" :key="index" v-html="step"></li>
               </ul>
             </div>
             <div v-if="messageUnit.type === 'testCodeExplanation'" class="message-margin">
               <ul>
-                <li v-for="(step, index) in messageUnit.data" :key="index">
-                  {{ step }}
-                </li>
+                <li v-for="(step, index) in messageUnit.data" :key="index" v-html="step"></li>
               </ul>
             </div>
             <div v-if="messageUnit.type === 'showcode'" class="message-margin">
@@ -425,5 +422,11 @@ const handleUserInput = (input) => {
 
 .message-margin {
   margin: 10px 0;
+}
+
+:deep(.code-style) {
+  background-color: #bbb8b86d;
+  color: #333;
+  font-family: monospace;
 }
 </style>
