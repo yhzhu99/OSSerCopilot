@@ -39,44 +39,54 @@ const getFirstAnalysis = () => {
     {
     id: 1,
     label: "C10 - Core library files that work everywhere, both server and mobile. We are slowly moving pieces from ATen/core here. This library is intended only to contain essential functionality, and appropriate to use in settings where binary size matters. (But you'll have a lot of missing functionality if you try to use it directly.)",
+    link: "https://github.com/pytorch/pytorch/tree/main/c10",
   },
   {
     id: 2,
     label: 'aten - C++ tensor library for PyTorch (no autograd support)',
+    link:"https://github.com/pytorch/pytorch/tree/main/aten",
     children: [
       {
         id: 7,
         label: 'src - README',
+        link: 'https://github.com/pytorch/pytorch/tree/main/aten/src',
       }
     ],
   },
   {
     id: 3,
     label: 'torch - The actual PyTorch library. Everything that is not in csrc is a Python module, following the PyTorch Python frontend module structure.',
+    link: 'https://github.com/pytorch/pytorch/tree/main/torch',
     children: [
       {
         id: 8,
         label: 'csrc - C++ files composing the PyTorch library. Files in this directory tree are a mix of Python binding code, and C++ heavy lifting. Consult setup.py for the canonical list of Python binding files; conventionally, they are often prefixed with python_. README',
+        link: 'https://github.com/pytorch/pytorch/tree/main/torch/csrc',
         children: [
           {
             id: 17,
             label: 'jit - Compiler and frontend for TorchScript JIT frontend. README',
+            link: 'https://github.com/pytorch/pytorch/tree/main/torch/csrc/jit',
           },
           {
             id: 18,
             label: 'autograd - Implementation of reverse-mode automatic differentiation. README',
+            link: 'https://github.com/pytorch/pytorch/tree/main/torch/csrc/autograd',
           },
           {
             id: 19,
             label: 'api - The PyTorch C++ frontend.',
+            link: 'https://github.com/pytorch/pytorch/tree/main/torch/csrc/api',
           },
           {
             id: 20,
             label: 'distributed - Distributed training support for PyTorch.',
+            link: 'https://github.com/pytorch/pytorch/tree/main/torch/csrc/distributed',
           },
           {
             id: 21,
             label: 'Exceptions.h - Moreover, when using the following macros, the generated warnings will be converted into python warnings that can be caught by the user.',
+            link: 'https://github.com/pytorch/pytorch/blob/main/torch/csrc/Exceptions.h',
           }
         ],
       }
@@ -85,36 +95,44 @@ const getFirstAnalysis = () => {
   {
     id: 4,
     label: 'tools - Code generation scripts for the PyTorch library. See README of this directory for more details.',
+    link: 'https://github.com/pytorch/pytorch/tree/main/tools',
   },
   {
     id: 5,
     label: 'test - Python unit tests for PyTorch Python frontend.',
+    link: 'https://github.com/pytorch/pytorch/tree/main/test',
     children: [
       {
         id: 9,
         label: 'test_torch.py - Basic tests for PyTorch functionality.',
+        link: 'https://github.com/pytorch/pytorch/blob/main/test/test_torch.py',
       },
       {
         id: 10,
         label: 'test_autograd.py - Tests for non-NN automatic differentiation support.',
+        link: 'https://github.com/pytorch/pytorch/blob/main/test/test_autograd.py',
       },
       {
         id: 11,
         label: 'test_nn.py - Tests for NN operators and their automatic differentiation.',
+        link: 'https://github.com/pytorch/pytorch/blob/main/test/test_nn.py'
       },
       {
         id: 12,
         label: 'test_jit.py - Tests for the JIT compiler and TorchScript.',
+        link: 'https://github.com/pytorch/pytorch/blob/main/test/test_jit.py'
       },
       {
         id: 13,
         label: 'cpp - C++ unit tests for PyTorch C++ frontend.',
+        link: 'https://github.com/pytorch/pytorch/tree/main/test/cpp',
       },
     ],
   },
   {
     id: 6,
     label: 'caffe2 - The Caffe2 library.',
+    link: 'https://github.com/pytorch/pytorch/tree/main/caffe2',
     children: [
       {
         id: 14,
@@ -161,6 +179,12 @@ const sendMessage = () => {
     handleUserInput(userInput.value);
     userInput.value = '';
   }
+};
+
+const handleNodeClick = (node) => {
+  // 假设你想根据节点的 label 或 id 来决定跳转的链接
+  const link = node.link; // 这里替换成你的目标链接
+  window.open(link, '_blank'); // 在新标签页中打开链接
 };
 
 const getFileAnalysis = () => {
@@ -258,6 +282,7 @@ const handleUserInput = (input) => {
                 <el-tree
                   :data="messageUnit.data"
                   :props="defaultProps"
+                  @node-click="handleNodeClick"
                 />
               </el-scrollbar>
             </div>

@@ -78,20 +78,20 @@ const getFirstRecommendedIssues = () => {
         title: 'torch.fx.Tracer.record_stack_traces is broken in torch 2.4.0',
         difficulty: 'Medium',
         description: [
-          "torch.fx.Tracer has a record_stack_traces member. It does not give the correct stack trace, starting with torch 2.4 RC.",
+          "<span class='code-style'>torch.fx.Tracer</span> has a <span class='code-style'>record_stack_traces</span> member. It does not give the correct stack trace, starting with torch 2.4 RC.",
           "It is not sure it is part of the external API, but it was nice to have. The following is working in 2.3, but broken in 2.4RC",
-          "It was broken in this PR: #121449 where you stopped using the find_user_frame (or an equivalent function) to filter non user stack traces."
+          "It was broken in this PR: #121449 where you stopped using the <span class='code-style'>find_user_frame</span> (or an equivalent function) to filter non user stack traces."
         ],
         reason: [
-          "It's a bug fix in a core functionality (torch.fx.Tracer), which is a good entry point for understanding the internals of PyTorch.",
+          "It's a bug fix in a core functionality (<span class='code-style'>torch.fx.Tracer</span>), which is a good entry point for understanding the internals of PyTorch.",
           "The issue is well-defined with a clear description of the problem and a potential solution, making it easier for a newcomer to approach.",
           "It involves working with Python and PyTorch, which are popular technologies in the machine learning community and is a perfect match for the needs you've expressed earlier.",
-          "The scope seems manageable for a newcomer, as it focuses on a specific feature (record_stack_traces) rather than a large-scale change."
+          "The scope seems manageable for a newcomer, as it focuses on a specific feature (<span class='code-style'>record_stack_traces</span>) rather than a large-scale change."
         ],
         gain: [
           "Completing this issue would help improve PyTorch's debugging capabilities, which is crucial for the community of developers and researchers using the framework.",
-          "It provides an opportunity to learn about:a. PyTorch's internal structure and the FX module for code transformation.b. Handling stack traces in Python, which is an important debugging skill.c. The process of identifying and fixing regression bugs in open-source projects.",
-          "Working on this issue would give the newcomer experience in:a. Reading and understanding existing code in a large open-source project.b. Writing test cases to verify bug fixes.c. Collaborating with the PyTorch community through the pull request process."
+          "It provides an opportunity to learn about: a. PyTorch's internal structure and the FX module for code transformation; b. Handling stack traces in Python, which is an important debugging skill; c. The process of identifying and fixing regression bugs in open-source projects.",
+          "Working on this issue would give the newcomer experience in: a. Reading and understanding existing code in a large open-source project; b. Writing test cases to verify bug fixes; c. Collaborating with the PyTorch community through the pull request process."
         ],
       },
       {
@@ -333,33 +333,27 @@ const handleUserInput = (input) => {
             <div v-if="message.text" class="message-margin">{{ message.text }}</div>
             <div v-if="message.type === 'recommendation'" class="message-margin">
               <el-collapse>
-                <el-collapse-item v-for="issue in message.data" :key="issue.number" :title="issue.number">
+                <el-collapse-item v-for="issue in message.data" :key="issue.number" :title="`${issue.number} - ${issue.title.slice(0, 20)}...`">
                   <div class="project-container">
-                  <el-link :href="issue.link" type="primary" target="_blank" :gutter="10"> {{ issue.number }}</el-link>
+                  <el-link :href="issue.link" type="primary" target="_blank" :gutter="10"> {{ issue.number }} </el-link>
                   <el-button type="primary" @click="chooseIssue(issue.link)">Choose This Issue!</el-button>
                   </div>
-                  <p><strong>Title:</strong>{{ issue.Title }}</p>
+                  <p><strong>Title:</strong>{{ issue.title }}</p>
                   <p><strong>Difficulty Level:</strong><el-tag :type="issue.difficulty === 'Easy' ? 'success' : 'warning'">{{ issue.difficulty }}</el-tag></p>
                   <div>
                     <strong>Issue Description:</strong>
-                    <p v-for="(descriptionPoint, index) in issue.description" :key="index">
-                      {{ descriptionPoint }}
-                    </p>
+                    <p v-for="(descriptionPoint, index) in issue.description" :key="index" v-html="descriptionPoint"></p>
                   </div>
                   <div>
                     <strong>Recommendation Reason:</strong>
                     <ul>
-                      <li v-for="(reasonPoint, index) in issue.reason" :key="index">
-                        {{ reasonPoint }}
-                      </li>
+                      <li v-for="(reasonPoint, index) in issue.reason" :key="index" v-html="reasonPoint"></li>
                     </ul>
                   </div>
                   <div>
                     <strong>What you can gain:</strong>
                     <ul>
-                      <li v-for="(gainPoint, index) in issue.gain" :key="index">
-                        {{ gainPoint }}
-                      </li>
+                      <li v-for="(gainPoint, index) in issue.gain" :key="index" v-html="gainPoint"></li>
                     </ul>
                   </div>
                 </el-collapse-item>
@@ -531,5 +525,11 @@ const handleUserInput = (input) => {
 
 .message-margin {
   margin: 10px 0; /* 上下间距为 10px，左右间距为 0 */
+}
+
+:deep(.code-style) {
+  background-color: #bbb8b86d;
+  color: #333;
+  font-family: monospace;
 }
 </style>
