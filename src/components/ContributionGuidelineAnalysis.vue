@@ -65,9 +65,14 @@ const getFirstAnalysis = () => {
 };
 
 
-// 初始化贡献指南分析
+const initialized = ref(getFromLocalStorage('contributionGuidelineInitialized') === 'true');
+// Initialize contribution guideline analysis
 onMounted(() => {
-  getFirstAnalysis();
+  if (!initialized.value) {
+    getFirstAnalysis();
+    initialized.value = true;
+    saveToLocalStorage('contributionGuidelineInitialized', 'true');
+  }
 });
 
 // 发送消息

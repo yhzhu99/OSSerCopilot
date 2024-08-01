@@ -148,10 +148,14 @@ const getFirstAnalysis = () => {
   }, 500);
 };
 
-
+const initialized = ref(getFromLocalStorage('projectStructureInitialized') === 'true');
 // 初始化贡献指南分析
 onMounted(() => {
-  getFirstAnalysis();
+  if (!initialized.value) {
+    getFirstAnalysis();
+    initialized.value = true;
+    saveToLocalStorage('projectStructureInitialized', 'true');
+  }
 });
 
 // 发送消息

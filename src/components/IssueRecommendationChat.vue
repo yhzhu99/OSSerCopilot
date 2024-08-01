@@ -273,14 +273,19 @@ const chooseIssue = (link) => {
       window.open(link, '_blank');
 };
 
+const initialized = ref(getFromLocalStorage('issueRecommendationInitialized') === 'true');
 // 初始化推荐项目
 onMounted(() => {
-  form.programmingLanguages = userHistory.programmingLanguages;
-  form.difficultyLevel = userHistory.difficultyLevel;
-  form.availableTime = userHistory.availableTime;
-  form.motivation = userHistory.motivation;
+  if (!initialized.value) {
+    form.programmingLanguages = userHistory.programmingLanguages;
+    form.difficultyLevel = userHistory.difficultyLevel;
+    form.availableTime = userHistory.availableTime;
+    form.motivation = userHistory.motivation;
 
-  getFirstRecommendedIssues();
+    getFirstRecommendedIssues();
+    initialized.value = true;
+    saveToLocalStorage('issueRecommendationInitialized', 'true');
+  }
 });
 
 // 发送消息

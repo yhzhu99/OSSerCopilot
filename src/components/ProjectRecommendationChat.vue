@@ -230,14 +230,19 @@ const chooseProject = (link) => {
       window.open(link, '_blank');
 };
 
+const initialized = ref(getFromLocalStorage('projectRecommendationInitialized') === 'true');
 // 初始化推荐项目
 onMounted(() => {
-  form.programmingLanguages = userHistory.programmingLanguages;
-  form.projectExperience = userHistory.projectExperience;
-  form.availableTime = userHistory.availableTime;
-  form.motivation = userHistory.motivation;
+  if (!initialized.value) {
+    form.programmingLanguages = userHistory.programmingLanguages;
+    form.projectExperience = userHistory.projectExperience;
+    form.availableTime = userHistory.availableTime;
+    form.motivation = userHistory.motivation;
 
-  getFirstRecommendedProjects();
+    getFirstRecommendedProjects();
+    initialized.value = true;
+    saveToLocalStorage('projectRecommendationInitialized', 'true');
+  }
 });
 
 // 发送消息

@@ -63,10 +63,14 @@ const getFirstAnalysis = () => {
   }, 500);
 };
 
-
+const initialized = ref(getFromLocalStorage('issueAnalysisInitialized') === 'true');
 // 初始化issue分析
 onMounted(() => {
-  getFirstAnalysis();
+  if (!initialized.value) {
+    getFirstAnalysis();
+    initialized.value = true;
+    saveToLocalStorage('issueAnalysisInitialized', 'true');
+  }
 });
 
 // 发送消息

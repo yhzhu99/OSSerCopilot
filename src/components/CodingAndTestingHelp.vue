@@ -74,10 +74,14 @@ const getFirstCode = () => {
   }, 500);
 };
 
-
+const initialized = ref(getFromLocalStorage('codingTestingInitialized') === 'true');
 // 初始化
 onMounted(() => {
-  getFirstCode();
+  if (!initialized.value) {
+    getFirstCode();
+    initialized.value = true;
+    saveToLocalStorage('codingTestingInitialized', 'true');
+  }
 });
 
 // 发送消息

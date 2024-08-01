@@ -66,12 +66,16 @@ const getReviewTips = () => {
   }, 500);
 };
 
-
+const initialized = ref(getFromLocalStorage('preCodeReviewInitialized') === 'true');
 // 初始化
 onMounted(() => {
-  form.PRDescription = userHistory.PRDescription;
-  form.codeFileList = userHistory.codeFileList;
-  getReviewTips();
+  if (!initialized.value) {
+    form.PRDescription = userHistory.PRDescription;
+    form.codeFileList = userHistory.codeFileList;
+    getReviewTips();
+    initialized.value = true;
+    saveToLocalStorage('preCodeReviewInitialized', 'true');
+  }
 });
 
 // 发送消息

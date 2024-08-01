@@ -72,10 +72,15 @@ const getModificationAdviceTips = () => {
 };
 
 
+const initialized = ref(getFromLocalStorage('prModificationInitialized') === 'true');
 // 初始化
 onMounted(() => {
-  form.PRURL = userHistory.PRURL;
-  getModificationAdviceTips();
+  if (!initialized.value) {
+    form.PRURL = userHistory.PRURL;
+    getModificationAdviceTips();
+    initialized.value = true;
+    saveToLocalStorage('prModificationInitialized', 'true');
+  }
 });
 
 // 发送消息
