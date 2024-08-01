@@ -128,7 +128,7 @@ assert 'code: return x + self.m1(x)' in sym.print_readable()`;
         { 
           type: 'showcode', 
           data: issueReappearCode.value, 
-          text: 'Next, as we can see from the code below, torch.fx.Tracer has a record_stack_traces member. It does not give the correct stack trace, starting with torch 2.4 RC. torch.export.unflatten looses stack trace for collapsed modules.', 
+          text: "Next, as we can see from the code below, <span class='code-style'>torch.fx.Tracer</span> has a <span class='code-style'>record_stack_traces</span> member. It does not give the correct stack trace, starting with torch 2.4 RC. <span class='code-style'>torch.export.unflatten</span> looses stack trace for collapsed modules.", 
         }
       ],
       sender: 'bot'
@@ -146,15 +146,15 @@ warnings.warn(f"time_taken: {time.time() - time_start}")`;
     messages.value.push({
       messageUnits: [
         {
-          text: 'After my analysis of the code base and past issues, this issue seems to be related to PR <a href="https://github.com/pytorch/pytorch/issues/130861" target="_blank">#121449</a>, where pytorch stopped using the find_user_frame (or an equivalent function) to filter non user stack traces.',
+          text: 'After my analysis of the code base and past issues, this issue seems to be related to PR <a href="https://github.com/pytorch/pytorch/issues/130861" target="_blank">#121449</a>, where pytorch stopped using the <span class=\'code-style\'>find_user_frame</span> (or an equivalent function) to filter non user stack traces.',
         },
         { 
           type: 'showcode', 
           data: relatedIssuRecommendationCode.value, 
-          text: 'This PR replace traceback.extract_stack with CapturedTraceback.extract using below code:', 
+          text: 'This PR replace <span class=\'code-style\'>traceback.extract_stack</span> with <span class=\'code-style\'>CapturedTraceback.extract</span> using below code:', 
         },
         { 
-          text: 'and forcing FakeTensorConfig.debug to True, record_stack_traces to True, logging level to debug, it shows that the the changed code is consistently ard 20 secs faster (~90s vs originally ~110s). But it also result in issue #130861. Looking through this PR will help to resolve the issue!', 
+          text: 'and forcing <span class=\'code-style\'>FakeTensorConfig.debug</span> to True, <span class=\'code-style\'>record_stack_traces</span> to True, logging level to debug, it shows that the the changed code is consistently ard 20 secs faster (~90s vs originally ~110s). But it also result in issue #130861. Looking through this PR will help to resolve the issue!', 
         }
       ],
       sender: 'bot'
@@ -167,31 +167,31 @@ const getSolutionStepsAnalysis = () => {
   setTimeout(() => {
     solutionSteps.value = [
       {
-        pstep: "Identify the Problem. - The issue is that the record_stack_traces functionality in torch.fx.Tracer is not providing the correct stack trace in PyTorch 2.4.0 RC. This was working correctly in PyTorch 2.3.",
+        pstep: "<strong>Identify the Problem.</strong> - The issue is that the <span class='code-style'>record_stack_traces</span> functionality in <span class='code-style'>torch.fx.Tracer</span> is not providing the correct stack trace in PyTorch 2.4.0 RC. This was working correctly in PyTorch 2.3.",
         childrenContent:[]
       },
       {
-        pstep: "Locate the Source of the Problem. - The problem was introduced in PR #121449, where the find_user_frame function (or an equivalent) was removed, which was previously used to filter out non-user stack traces.",
+        pstep: "<strong>Locate the Source of the Problem.</strong> - The problem was introduced in PR #121449, where the <span class='code-style'>find_user_frame</span> function (or an equivalent) was removed, which was previously used to filter out non-user stack traces.",
         childrenContent:[]
       },
       {
-        pstep: "Implement the Fix - We'll need to modify the create_proxy method in the Tracer class and add a new helper function to filter the stack trace.Let's break down the changes:",
+        pstep: "<strong>Implement the Fix</strong> - We'll need to modify the <span class='code-style'>create_proxy</span> method in the <span class='code-style'>Tracer</span> class and add a new helper function to filter the stack trace.Let's break down the changes:",
         childrenContent:[
-          "We create a new Tracer class that inherits from torch.fx.Tracer.",
-          "We override the create_proxy method. This method is responsible for creating proxy objects during the tracing process.",
-          "In the create_proxy method, we first call the parent class's create_proxy method using super().",
-          "We then check if record_stack_traces is True and if the proxy's node doesn't already have a stack trace.",
-          "If both conditions are met, we set the stack_trace of the proxy's node using our new _find_user_frame2_4 method.",
-          "The _find_user_frame2_4 method is a helper function that filters the stack trace to remove internal PyTorch frames and keep only user-relevant frames.",
-          "In _find_user_frame2_4, we split the stack trace into lines, remove the last frame if it's from torch/fx/proxy.py, and then remove any remaining frames that contain /fx/ until we reach user code."
+          "We create a new <span class='code-style'>Tracer</span> class that inherits from <span class='code-style'>torch.fx.Tracer.</span>",
+          "We override the <span class='code-style'>create_proxy</span> method. This method is responsible for creating proxy objects during the tracing process.",
+          "In the <span class='code-style'>create_proxy</span> method, we first call the parent class's <span class='code-style'>create_proxy</span> method using <span class='code-style'>super()</span>.",
+          "We then check if <span class='code-style'>record_stack_traces</span> is True and if the proxy's node doesn't already have a stack trace.",
+          "If both conditions are met, we set the <span class='code-style'>stack_trace</span> of the proxy's node using our new <span class='code-style'>_find_user_frame2_4</span> method.",
+          "The <span class='code-style'>_find_user_frame2_4</span> method is a helper function that filters the stack trace to remove internal PyTorch frames and keep only user-relevant frames.",
+          "In <span class='code-style'>_find_user_frame2_4</span>, we split the stack trace into lines, remove the last frame if it's from torch/fx/proxy.py, and then remove any remaining frames that contain /fx/ until we reach user code."
         ]
       },
       {
-        pstep: "Test the Fix. - Run the test code provided in the issue description to ensure that the assertions pass and the correct stack traces are captured.",
+        pstep: "<strong>Test the Fix.</strong> - Run the test code provided in the issue description to ensure that the assertions pass and the correct stack traces are captured.",
         childrenContent:[]
       },
       {
-        pstep: "Submit a Pull Request. - Once you've verified that the fix works, you can submit a pull request to the PyTorch repository with these changes.",
+        pstep: "<strong>Submit a Pull Request.</strong> - Once you've verified that the fix works, you can submit a pull request to the PyTorch repository with these changes.",
         childrenContent:[]
       },
     ];
@@ -203,7 +203,7 @@ const getSolutionStepsAnalysis = () => {
           text: 'I think you can try to resolve the issue by following these steps:', 
         },
         {
-          text: "This solution should restore the functionality of record_stack_traces in PyTorch 2.4.0 and later versions. It filters out internal PyTorch frames from the stack trace, providing only the user-relevant information."
+          text: "This solution should restore the functionality of <span class='code-style'>record_stack_traces</span> in PyTorch 2.4.0 and later versions. It filters out internal PyTorch frames from the stack trace, providing only the user-relevant information."
         }
       ],
       sender: 'bot'
@@ -265,16 +265,12 @@ const handleUserInput = (input) => {
             <div v-if="messageUnit.text" v-html="messageUnit.text" class="message-margin"></div>
             <div v-if="messageUnit.type === 'catalog'" class="message-margin">
               <ol>
-                <li v-for="(step, index) in messageUnit.data" :key="index">
-                  {{ step }}
-                </li>
+                <li v-for="(step, index) in messageUnit.data" :key="index" v-html="step"></li>
               </ol>
             </div>
             <div v-if="messageUnit.type === 'issueReappearVersion'" class="message-margin">
               <ul>
-                <li v-for="(step, index) in messageUnit.data" :key="index">
-                  {{ step }}
-                </li>
+                <li v-for="(step, index) in messageUnit.data" :key="index" v-html="step"></li>
               </ul>
             </div>
             <div v-if="messageUnit.type === 'showcode'" class="message-margin">
@@ -285,11 +281,9 @@ const handleUserInput = (input) => {
                   
                   <li v-for="(step, index) in messageUnit.data" :key="index">
                     <el-scrollbar>
-                    <div>{{ step.pstep }}</div>
+                    <div v-html="step.pstep"></div>
                     <ol>
-                      <li v-for="(content, index) in step.childrenContent" :key="index">
-                        {{ content }}
-                      </li>
+                      <li v-for="(content, index) in step.childrenContent" :key="index" v-html="content"></li>
                     </ol>
                     </el-scrollbar>
                   </li>
@@ -411,5 +405,11 @@ const handleUserInput = (input) => {
 
 .message-margin {
   margin: 10px 0;
+}
+
+:deep(.code-style) {
+  background-color: #bbb8b86d;
+  color: #333;
+  font-family: monospace;
 }
 </style>
