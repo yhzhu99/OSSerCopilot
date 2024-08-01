@@ -95,8 +95,8 @@ const sendMessage = () => {
 const getModificationAdvice = () => {
   setTimeout(() => {
     PRCodeModificationAdvice.value = [
-      "Remove the _find_user_frame2_4 function definition.",
-      "Directly call the find_user_frame function."
+      "Remove the <span class=\'code-style\'>_find_user_frame2_4</span> function definition.",
+      "Directly call the <span class=\'code-style\'>find_user_frame</span> function."
     ];
     PRReferCode.value =  `# Remove the _find_user_frame2_4 function definition
 
@@ -110,15 +110,15 @@ return proxy`;
                               text: 'Based on your submitted PR URL, here is some information on the current state of your PR and some suggestions for change:',
                             },
                             { 
-                              text: '1. Merging is blocked: The base branch restricts merging to authorized users. <a href="https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches" target="_blank">You can learn more about protected branches.</a>', 
+                              text: '1. <strong>Merging is blocked</strong>: The base branch restricts merging to authorized users. <a href="https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches" target="_blank">You can learn more about protected branches.</a>', 
                               pass: 'False'
                             },
                             { 
-                              text: '2. 4 workflows awaiting approval: This workflow requires approval from a maintainer. <a href="https://docs.github.com/en/actions/managing-workflow-runs/approving-workflow-runs-from-public-forks" target="_blank">You can learn more about approving workflows.</a>', 
+                              text: '2. <strong>4 workflows awaiting approval</strong>: This workflow requires approval from a maintainer. <a href="https://docs.github.com/en/actions/managing-workflow-runs/approving-workflow-runs-from-public-forks" target="_blank">You can learn more about approving workflows.</a>', 
                               pass: 'Warning'
                             },
                             { 
-                              text: '3. From the reviewer\'s comment, they suggest that you should call the original find_user_frame function in your new code instead of introducing a simplified version named _find_user_frame2_4. This approach avoids code duplication and leverages the existing, tested functionality.', 
+                              text: '3. <strong>From the reviewer\'s comment\'s</strong>, they suggest that you should call the original <span class=\'code-style\'>find_user_frame</span> function in your new code instead of introducing a simplified version named <span class=\'code-style\'>_find_user_frame2_4</span>. This approach avoids code duplication and leverages the existing, tested functionality.', 
                               pass: 'Warning'
                             },
                             { 
@@ -132,7 +132,7 @@ return proxy`;
                               data: PRReferCode.value,
                             },
                             { 
-                              text: 'By doing this, you simplify your code and use the existing functionality to handle stack traces. Ensure that the find_user_frame function is defined and that it meets your requirements before making this change.', 
+                              text: 'By doing this, you simplify your code and use the existing functionality to handle stack traces. Ensure that the <span class=\'code-style\'>find_user_frame</span> function is defined and that it meets your requirements before making this change.', 
                             },
                           ],
                         sender: 'bot'
@@ -210,15 +210,13 @@ const handleUserInput = (input) => {
             </div>
             <div v-if="messageUnit.type === 'catalog'" class="message-margin">
               <ul>
-                <li v-for="(step, index) in messageUnit.data" :key="index">
-                  {{ step }}
+                <li v-for="(step, index) in messageUnit.data" :key="index" v-html="step">
                 </li>
               </ul>
             </div>
             <div v-if="messageUnit.type === 'codeadvice'" class="message-margin">
               <ol>
-                <li v-for="(step, index) in messageUnit.data" :key="index">
-                  {{ step }}
+                <li v-for="(step, index) in messageUnit.data" :key="index" v-html="step">
                 </li>
               </ol>
             </div>
@@ -361,5 +359,11 @@ const handleUserInput = (input) => {
 
 .message-margin {
   margin: 10px 0;
+}
+
+:deep(.code-style) {
+  background-color: #bbb8b86d;
+  color: #333;
+  font-family: monospace;
 }
 </style>
