@@ -321,7 +321,7 @@ const handleUserInput = (input) => {
               </div>
             </div>
             <div v-if="message.type === 'form'" class="message-margin">
-              <el-form :model="form" label-width="120px" class="recommendation-form">
+              <el-form :model="form" label-width="auto" class="recommendation-form" label-position="top">
                 <el-form-item label="Programming Languages">
                   <el-select v-model="form.programmingLanguages" multiple placeholder="Select the programming language of the project you want to contribute">
                     <el-option label="JavaScript" value="JavaScript" />
