@@ -1,5 +1,5 @@
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('gh-next extension installed');
+  console.log('OSSerCopilot extension installed');
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

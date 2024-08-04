@@ -138,7 +138,7 @@ onMounted(() => {
       <div class="content-overlay"></div>
       <div class="content-inner">
         <div v-if="currentView === 'introduction'">
-          <h1>Welcome to the OSSNewcomerCopilot 🎁</h1>
+          <h1>Welcome to the OSSerCopilot 🎁</h1>
           <p style="font-size: 16px;">I am an <strong>AI bot</strong> 🤖️ that guides <strong>OSS newcomers</strong> through their first few contributions to help them get started and grow better. </p>
           <p style="font-size: 16px;">I can help in all steps of the open source contribution (shown below):</p>
           <el-timeline style="max-width: 600px; margin: 20px auto;">

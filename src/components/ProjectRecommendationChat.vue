@@ -289,7 +289,7 @@ const handleUserInput = (input) => {
           <el-card class="bot-card">
             <div class="header-content">
               <el-avatar src="https://www.svgrepo.com/show/35383/robot.svg" class="avatar" />
-              <span>OSSNewcomerCopilot</span>
+              <span>OSSerCopilot</span>
             </div>
             <img v-if="message.img" :src="message.img" class="bot-image" />
             <div v-if="message.text" class="message-margin">{{ message.text }}</div>

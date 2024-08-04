@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "gh-next",
+  "name": "OSSerCopilot",
   "version": "1.0.0",
   "description": "A GitHub companion extension.",
   "permissions": ["activeTab", "storage", "sidePanel"],

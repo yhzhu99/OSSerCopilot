@@ -12,7 +12,7 @@ const mountApp = () => {
     app.component(key, component);
   }
   
-  const mountElement = document.getElementById('gh-next-container');
+  const mountElement = document.getElementById('OSSerCopilot-container');
   app.mount(mountElement);
 };
 

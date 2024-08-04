@@ -198,7 +198,7 @@ const handleUserInput = (input) => {
             <el-card class="bot-card">
             <div class="header-content">
               <el-avatar src="https://www.svgrepo.com/show/35383/robot.svg" class="avatar" />
-              <span>OSSNewcomerCopilot</span>
+              <span>OSSerCopilot</span>
             </div>
           <div v-for="(messageUnit, index) in message.messageUnits" :key="index">
             <img v-if="messageUnit.img" :src="messageUnit.img" class="bot-image" />
